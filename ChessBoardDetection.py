@@ -1,20 +1,18 @@
 import cv2 as cv
 import numpy as np
 import os
-import random
-import math
 
 #################################
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-# Nombro la ventana
-cv.namedWindow("Cuadrado", cv.WINDOW_NORMAL)
-  
-# Reajustamos el tamaño de la ventana
-cv.resizeWindow("Cuadrado", 1000, 1000)
 
-def showImage(name,img): # Funcion para mostrar la imagen
+
+def showImage(name,img,w=800,h=800): # Funcion para mostrar la imagen
+    # Nombro la ventana
+    cv.namedWindow(name, cv.WINDOW_NORMAL)
+    # Reajustamos el tamaño de la ventana
+    cv.resizeWindow(name, w, h)
     cv.imshow(name,img)
 
 #################################
@@ -34,7 +32,7 @@ maxSum = 0
 #Aquí almacenamos el contorno más grande en perímetro/2
 contornoMax = []
 #Variables para luego cropear la imagen
-xSquare = ySquare = wSquare = hSquare = 0
+xSquare, ySquare, wSquare, hSquare = 0,0,0,0
 
 
 #Iteramos los contornos
@@ -55,12 +53,13 @@ for cnt in contours:
 img = cv.drawContours(img,[contornoMax],-1,(0,255,0),3)
 cv.putText(img,'Square',(x1,y1),cv.FONT_HERSHEY_SIMPLEX,0.6,(255,255,0),2)
 
+#showImage("Etiqueta", img)
+
 #TODO: cambiar nombre
-img = img[ySquare:ySquare+hSquare,xSquare:xSquare+wSquare] # Recorte de la imagen
+img = img[ySquare:ySquare+hSquare, xSquare:xSquare+wSquare] # Recorte de la imagen
 
 
 
-#showImage("Cuadrado", img)
 
 
 square_edges = cv.Canny(img,100,200)
@@ -83,9 +82,15 @@ print(squares_arr)
 #Empezamos solo detectando peones
 num_p = 0
 
-pawn_img = cv.imread('pawn.png',cv.IMREAD_UNCHANGED)
+pawn_img = cv.imread('./template_images/pawn.png',cv.IMREAD_UNCHANGED)
 peon_w = pawn_img.shape[1]
 peon_h = pawn_img.shape[0]
+
+
+
+
+
+
 
 #TODO: temporal
 threshold = 0.6
@@ -98,12 +103,12 @@ def detectarPeon(cell,count): #FIXME: temporal
     print("PRECISION: " , max_val)
     if max_val >= threshold: 
         print("PEON")
+        
     
 
 #TODO: PONER NOMBRES DE VARIABLES REALES
 count = 0 #FIXME: temporal
 for (x,y) in squares_arr: #Recorremos los cuadrados pintando cada contorno
-    count = count+1
     top_left = (x,y)
     bottom_right = (x+square_size,y+square_size)
     cv.rectangle(img, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)

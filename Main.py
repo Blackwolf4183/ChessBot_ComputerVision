@@ -1,50 +1,24 @@
 import cv2 as cv
 import numpy as np
 
-chessboard = cv.imread('test_image.png',cv.IMREAD_UNCHANGED)
-pawn_img = cv.imread('pawn.png',cv.IMREAD_UNCHANGED)
+#TODO: Captura de imagenes a tiempo real
+    # ADD: Capturar hasta que haya un tablero
+    # ADD: tomar captura una vez se haya hecho un movimiento y luego esperar a que cambie el tablero para volver a mirar ()
 
-peon_w = pawn_img.shape[1]
-peon_h = pawn_img.shape[0]
+    #INFO: screenCapturer.py
 
-result = cv.matchTemplate(chessboard,pawn_img,cv.TM_CCOEFF_NORMED)
-
-threshold = 0.6
-
-#localizaciones donde hay puntos con mas que el threshold
-locations = np.where(result >= threshold) # me devuelve dos arrays, el primero con las posiciones en y, y el segundo con las posiciones en x
-
-#revierte el orden de los arrays y combina cada uno de los elementos de cada array en una tupla
-locations = list(zip(*locations[::-1]))
-#print(locations)
-
-# primero creamos una lista de rectangulos del tipo [x,y,w,h]
-rectangles = []
-
-for loc in locations:
-    rect = [int(loc[0]),int(loc[1]),peon_w,peon_h]
-    rectangles.append(rect)
-    #Lo hacemos dos veces para que al menos cada rectangulo tenga un overlap, y así cuando hagamos groupRectangles no desaparezcan los matches debiles
-    rectangles.append(rect)
-print("RECTANGULOS:")
+#TODO: Actualizar si se está jugando una partida
+    # ADD: Función que devuelva True/False isChessBoard()
+    # ADD: Calcular turno (Quizás con los cuadrados amarillos)
 
 
-#agrupamos los matches en la misma region
-rectangles, weights = cv.groupRectangles(rectangles,1,0.5)
-print(rectangles)
+#TODO: Si esta jugando partida analizar tablero
+    # ADD: Crear clases para piezas y hacer todas las piezas objetos
 
 
-if len(rectangles):
-
-    for (x,y,w,h) in rectangles:
-
-        top_left = (x,y)
-        bottom_right = (x+w,y+h)
-        cv.rectangle(chessboard, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)
-
-
-    cv.imshow("Matches", chessboard)
-    cv.waitKey()
+#TODO: Si es mi turno, calculo mejor movimiento
+    # ADD: Lo ejecuto con ratón y teclado
+    
 
 
 """
