@@ -2,12 +2,27 @@ import cv2 as cv
 import numpy as np
 import os
 import random
+import math
+
+#################################
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+# Nombro la ventana
+cv.namedWindow("Cuadrados", cv.WINDOW_NORMAL)
+  
+# Reajustamos el tamaño de la ventana
+cv.resizeWindow("Cuadrados", 1000, 1000)
+
+def showImage(img): # Funcion para mostrar la imagen
+    cv.imshow('Cuadrados',img)
+
+#################################
+
+
 #Importamos imagen
 img = cv.imread('./test_images/test_image.png')
-#Sacamos Canny para los bordes
+#Sacamos Canny para los bordes porque si sacamos los contornos directamente no funciona por el ruido
 edges = cv.Canny(img,100,200)
 
 
@@ -42,29 +57,37 @@ cv.putText(img,'Square',(x1,y1),cv.FONT_HERSHEY_SIMPLEX,0.6,(255,255,0),2)
 
 img = img[ySquare:ySquare+hSquare,xSquare:xSquare+wSquare] # Recorte de la imagen
 
-# Nombro la ventana
-cv.namedWindow("Cuadrados", cv.WINDOW_NORMAL)
-  
-# Reajustamos el tamaño de la ventana
-cv.resizeWindow("Cuadrados", 1000, 1000)
 
-cv.imshow('Cuadrados',img)
+
+#showImage(img)
+
+
+square_edges = cv.Canny(img,100,200)
+
+img_width = square_edges.shape[0]
+square_size = int(img_width/8) # Tamaño del lado del cuadrado
+
+#Array que contenga las posiciones de arriba izquierda de los cuadrados
+squares_arr = []
+
+for f in range(8):
+    for c in range(8):
+        squares_arr.append((int(f * square_size),int(c * square_size)))
+
+        
+
+print(squares_arr)
+
+for (x,y) in squares_arr:
+    top_left = (x,y)
+    bottom_right = (x+square_size,y+square_size)
+    cv.rectangle(img, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)
+
+showImage(img) # Enseñar bordes obtenidos con Canny
+
+
 cv.waitKey(0)
 cv.destroyAllWindows()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # HOUGH
