@@ -33,7 +33,7 @@ class Chess:
         chess.setPiece(x, y, 0)
 
 
-chess = Chess()
+""" chess = Chess()
 print(chess.tablero)
 chess.setPiece(7,7,6)
-print(chess.tablero)
+print(chess.tablero) """

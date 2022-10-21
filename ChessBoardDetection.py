@@ -84,19 +84,24 @@ for (x,y) in squares_arr:
         f = os.path.join(directory, filename)
         # checking if it is a file
         if os.path.isfile(f):
-            print("CURRENT FILE: " , f)
             current_img = cv.imread(f,cv.IMREAD_UNCHANGED)
             result = cv.matchTemplate(chess_square,current_img,cv.TM_CCOEFF_NORMED)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
             precision_values.append((f,max_val))
-            print("Max val is: ", precision_values)
+            #print("Max val is: ", precision_values)
     
 
     top_piece = "",
     top_value = -100
 
     for (name,precision) in precision_values:
-        print(name)
+        if precision > top_value: 
+            top_value = precision
+            top_piece = name
+
+    top_value = -100
+
+    print("BEST MATCH: " , name)
     #Vaciamos array
     precision_values.clear()
 
