@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
+from chess import Chess
 
 #################################
 
@@ -51,18 +52,9 @@ for cnt in contours:
 
 #Texto y dibujar contornos
 img = cv.drawContours(img,[contornoMax],-1,(0,255,0),3)
-cv.putText(img,'Square',(x1,y1),cv.FONT_HERSHEY_SIMPLEX,0.6,(255,255,0),2)
-
-#showImage("Etiqueta", img)
-
-#TODO: cambiar nombre
-img = img[ySquare:ySquare+hSquare, xSquare:xSquare+wSquare] # Recorte de la imagen
-
-
-
-
-
-square_edges = cv.Canny(img,100,200)
+cropped_chessboard = img[ySquare:ySquare+hSquare, xSquare:xSquare+wSquare] # Recorte de la imagen
+#Aplicamos Canny para sacar las casillas del tablero
+square_edges = cv.Canny(cropped_chessboard,100,200)
 
 img_width = square_edges.shape[0]
 square_size = int(img_width/8) # Tamaño del lado del cuadrado
@@ -70,6 +62,7 @@ square_size = int(img_width/8) # Tamaño del lado del cuadrado
 #Array que contenga las posiciones de arriba izquierda de los cuadrados
 squares_arr = []
 
+#Añadimos las posiciones en la pantalla de los cuadrados
 for f in range(8):
     for c in range(8):
         squares_arr.append((int(f * square_size),int(c * square_size)))
@@ -78,54 +71,88 @@ for f in range(8):
 
 print(squares_arr)
 
-#TODO: Estructura de datos con el numero maximo de cada pieza
-#Empezamos solo detectando peones
-num_p = 0
+#Iteramos por todos los cuadrados y vamos añadiendo piezas
+directory = './template_images'
 
+precision_values = []
+
+for (x,y) in squares_arr:
+    #Cropeamos las imagenes
+    chess_square = cropped_chessboard[x:x+square_size,y:y+square_size]
+
+    for filename in os.listdir(directory):
+        f = os.path.join(directory, filename)
+        # checking if it is a file
+        if os.path.isfile(f):
+            print("CURRENT FILE: " , f)
+            current_img = cv.imread(f,cv.IMREAD_UNCHANGED)
+            result = cv.matchTemplate(chess_square,current_img,cv.TM_CCOEFF_NORMED)
+            min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
+            precision_values.append((f,max_val))
+            print("Max val is: ", precision_values)
+    
+
+    top_piece = "",
+    top_value = -100
+
+    for (name,precision) in precision_values:
+        print(name)
+    #Vaciamos array
+    precision_values.clear()
+
+
+print(precision_values)
+
+cv.waitKey(0)
+cv.destroyAllWindows()
+
+
+
+
+
+
+
+
+""" 
+#####################################################################
+
+#TODO: temporal
 pawn_img = cv.imread('./template_images/pawn.png',cv.IMREAD_UNCHANGED)
 peon_w = pawn_img.shape[1]
 peon_h = pawn_img.shape[0]
 
 
+num_p = 0
 
-
-
-
-
-#TODO: temporal
 threshold = 0.6
 
 def detectarPeon(cell,count): #FIXME: temporal
+    global num_p
     result = cv.matchTemplate(cell,pawn_img,cv.TM_CCOEFF_NORMED)
     #if count == 55: 
     #showImage("Celda" + str(count), result)
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
     print("PRECISION: " , max_val)
     if max_val >= threshold: 
+        num_p = num_p + 1 
         print("PEON")
         
     
 
-#TODO: PONER NOMBRES DE VARIABLES REALES
-count = 0 #FIXME: temporal
+count = 0 #TODO: temporal
 for (x,y) in squares_arr: #Recorremos los cuadrados pintando cada contorno
     top_left = (x,y)
     bottom_right = (x+square_size,y+square_size)
-    cv.rectangle(img, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)
+    cv.rectangle(cropped_chessboard, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)
 
     #Cropeamos las imagenes
-    chess_square = img[x:x+square_size,y:y+square_size]
+    chess_square = cropped_chessboard[x:x+square_size,y:y+square_size]
     detectarPeon(chess_square,count)
     #showImage("Celda" + str(count), chess_square)
 
 
-showImage("Cuadrado", img) # Enseñar cuadrados con los contornos dibujados
+showImage("Cuadrado", cropped_chessboard) # Enseñar cuadrados con los contornos dibujados
 
 
-#Iteración de los cuadrados y detección de piezas
-
-
-
-cv.waitKey(0)
-cv.destroyAllWindows()
-
+print(num_p)
+##################################################################### """
