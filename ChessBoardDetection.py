@@ -1,3 +1,4 @@
+from tkinter.messagebox import showinfo
 import cv2 as cv
 import numpy as np
 import os
@@ -24,6 +25,7 @@ img = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
 #Sacamos Canny para los bordes porque si sacamos los contornos directamente no funciona por el ruido
 edges = cv.Canny(img,100,200)
 
+#showImage("Edges", edges)
 
 #Cogemos los contornos de la imagen
 contours, _ = cv.findContours(edges,cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
@@ -76,19 +78,47 @@ directory = './template_images'
 
 precision_values = []
 
+chess = Chess()
+
 for (x,y) in squares_arr:
     #Cropeamos las imagenes
     chess_square = cropped_chessboard[x:x+square_size,y:y+square_size]
+    chess_square = cv.Canny(chess_square,100,200)
 
     for filename in os.listdir(directory):
         f = os.path.join(directory, filename)
         # checking if it is a file
-        if os.path.isfile(f):
-            current_img = cv.imread(f,cv.IMREAD_UNCHANGED)
-            result = cv.matchTemplate(chess_square,current_img,cv.TM_CCOEFF_NORMED)
+        if os.path.isfile(f) :
+            current_img = cv.imread(f,0)
+            result = cv.matchTemplate(chess_square,current_img,cv.TM_CCORR_NORMED)
+            #showImage("result" + filename, result)
             min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-            precision_values.append((f,max_val))
+            if max_val > 0.1: 
+                precision_values.append((f,max_val))
+            else:
+                precision_values.append(("NONE",max_val))
+
             #print("Max val is: ", precision_values)
+    
+
+    #print(precision_values) 
+
+    filename2piece = {
+        "./template_images\\black_pawn.png":-1,
+        "./template_images\\black_knight.png":-2,
+        "./template_images\\black_bishop.png":-3,
+        "./template_images\\black_rook.png":-4,
+        "./template_images\\black_queen.png":-5,
+        "./template_images\\black_king.png":-6,
+        "./template_images\\white_pawn.png":1,
+        "./template_images\\white_knight.png":2,
+        "./template_images\\white_bishop.png":3,
+        "./template_images\\white_rook.png":4,
+        "./template_images\\white_queen.png":5,
+        "./template_images\\white_king.png":6,
+        "NONE":0
+    }
+
     
 
     top_piece = "",
@@ -99,14 +129,24 @@ for (x,y) in squares_arr:
             top_value = precision
             top_piece = name
 
-    top_value = -100
 
-    print("BEST MATCH: " , name)
+    #posicionamiento en tablero virtual
+    x_piece = int(x/int(square_size))
+    y_piece = int(y/int(square_size))
+    chess.setPiece(x_piece,y_piece,filename2piece[top_piece])
+
+    print("x: ", x_piece, " y: ", y_piece, " piece: " , filename2piece[top_piece])
+
+    #print("BEST MATCH: " , top_piece)
+
+    top_value = -100
+    top_piece = ""
+
     #Vaciamos array
     precision_values.clear()
 
 
-print(precision_values)
+chess.printChessBoard()
 
 cv.waitKey(0)
 cv.destroyAllWindows()

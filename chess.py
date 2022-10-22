@@ -26,14 +26,20 @@ class Chess:
         self.tablero[10:12, :] = 99
 
     def setPiece(self, x, y, piece_keycode):
-        if self.tablero[x,y] != 99: # Que no se salga del tablero
+        if self.tablero[x+2,y+2] != 99: # Que no se salga del tablero
             self.tablero[x+2,y+2] = piece_keycode
         
     def removePiece(self, x, y):
-        chess.setPiece(x, y, 0)
+        self.setPiece(x, y, 0)
+
+    def printChessBoard(self):
+        for f in range(8):
+            print("")
+            for c in range(8):
+                print(self.tablero[f+2,c+2], " ",end = '')
 
 
 """ chess = Chess()
 print(chess.tablero)
 chess.setPiece(7,7,6)
-print(chess.tablero) """
+chess.printChessBoard() """
