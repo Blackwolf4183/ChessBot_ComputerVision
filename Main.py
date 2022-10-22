@@ -1,6 +1,8 @@
 import cv2 as cv
 import numpy as np
 from chess import Chess
+from chessBoardDetection import ChessBoardAnalizer
+import time
 
 #TODO: Captura de imagenes a tiempo real
 # ADD: Capturar hasta que haya un tablero
@@ -16,6 +18,24 @@ from chess import Chess
 # ADD: Crear clases para piezas y hacer todas las piezas objetos
 #INFO: #https://en.wikipedia.org/wiki/Board_representation_(computer_chess)
 #INFO: https://github.com/jhlywa/chess.js LIBRERIA DE JS
+
+st = time.time()
+
+#Importamos imagen
+tablero = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
+
+chessBoardAnalizer = ChessBoardAnalizer(tablero)
+resulting_board = chessBoardAnalizer.processBoard()
+
+resulting_board.printChessBoard()
+
+et = time.time()
+
+print("Time to execute: " , et-st)
+
+cv.waitKey(0)
+cv.destroyAllWindows()
+
 
 #TODO: Si es mi turno, calculo mejor movimiento
 # ADD: Lo ejecuto con ratón y teclado
