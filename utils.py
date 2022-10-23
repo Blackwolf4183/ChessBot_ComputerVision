@@ -61,7 +61,8 @@ def getBestScaleMatch(original,template):
         bestMatch = 0.0
 
         #FIXME: los parametros de linspace se puede alterar para buscar cuales son los mejores
-        for scale in np.linspace(0.2, 1, 20)[::-1]:
+        #FIXME: valores normales son 0.2,1 -- dependiendo de si nuestra imagen es más pequeña o más grande necesitaremos ajustar (quizas un script para sacar longitud de la captura y ver)
+        for scale in np.linspace(0.2, 1.6, 20)[::-1]:
             #reescalamos la imagen original
             resized = imutils.resize(original, width = int(original.shape[1] * scale))
 
