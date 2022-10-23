@@ -36,7 +36,10 @@ class Chess:
         for f in range(8):
             print("")
             for c in range(8):
-                print(self.tablero[f+2,c+2], " ",end = '')
+                if(self.tablero[f+2,c+2] < 0):
+                    print(self.tablero[f+2,c+2], "|",end = '')
+                else: 
+                    print(self.tablero[f+2,c+2], " |",end = '')
 
 
 """ chess = Chess()

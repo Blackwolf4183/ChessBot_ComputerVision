@@ -35,10 +35,10 @@ class ChessBoardAnalizer:
     
 
     def getContours(self):
-        #TODO: remove
+
         gray = cv.cvtColor(self.board, cv.COLOR_BGR2GRAY)
         th = cv.adaptiveThreshold(gray,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,9,2)
-        showImage("th", th)
+        #showImage("th", th)
         
         #FIXME: canny no es muy efectivo para el metodo de findcontours
         #Sacamos Canny para los bordes porque si sacamos los contornos directamente no funciona por el ruido
@@ -80,9 +80,8 @@ class ChessBoardAnalizer:
         return cropped_chessboard
 
     def divideSquares(self, cropped_board):
-        #Aplicamos Canny para sacar las casillas del tablero
-        square_edges = cv.Canny(cropped_board, 100, 200)
-        img_width = square_edges.shape[0]
+        #Sacamos la anchura del tablero
+        img_width = cropped_board.shape[0]
         square_size = int(img_width / 8)  # Tamaño del lado del cuadrado
         #Array que contenga las posiciones de arriba izquierda de los cuadrados
         squares_arr = []
@@ -115,7 +114,8 @@ class ChessBoardAnalizer:
                 #Si no tiene nada continuamos a la siguiente iteración 
                 continue
 
-            chess_square = cv.Canny(chess_square, 100, 200)
+            #FIXME: no hay que hacerle canny ya lo hace la función
+            #chess_square = cv.Canny(chess_square, 100, 200)
             #TODO: remove
             #showImage("square" + str(x) + str(y), chess_square)
             for filename in os.listdir(directory):
@@ -127,9 +127,6 @@ class ChessBoardAnalizer:
                     #print("Best match is: ", best_match)
                     precision_values.append((f, best_match))
                
-
-
-
             #print(precision_values)
 
             top_piece = "",
@@ -160,8 +157,6 @@ class ChessBoardAnalizer:
         contours = self.getContours()
         cropped_chessboard = self.findBoard(contours)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
-        #TODO: REMOVE
-        showImage("boardCropped", cropped_chessboard)
         updatedChess = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 
         #Devolvemos el nuevo objeto Chess con las posiciones de las piezas actualizadas

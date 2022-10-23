@@ -48,8 +48,7 @@ def isBlankSquare(image):
         return False
 
 def getBestScaleMatch(original,template):
-
-        template = cv.Canny(template,100,200)
+            
         (tH, tW) = template.shape[:2]
 
         found = None
@@ -69,6 +68,8 @@ def getBestScaleMatch(original,template):
 
             #Aplicamos Canny a la imagen original
             original_edged = cv.Canny(resized,100,200)
+            #TODO:REMOVE
+            #showImage("Original_edged" + str(scale), original_edged)
             result = cv.matchTemplate(original_edged, template, cv.TM_CCORR_NORMED)
             #Calculamos la precisión del match
             _, maxVal, _, maxLoc = cv.minMaxLoc(result)

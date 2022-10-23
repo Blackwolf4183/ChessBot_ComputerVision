@@ -23,7 +23,7 @@ import time
 st = time.time()
 
 #Importamos imagen
-tablero = cv.imread('./test_images/test_board_6.png',cv.IMREAD_UNCHANGED)
+tablero = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
 
 chessBoardAnalizer = ChessBoardAnalizer(tablero)
 resulting_board = chessBoardAnalizer.processBoard()
