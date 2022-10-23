@@ -156,6 +156,7 @@ class ChessBoardAnalizer:
     def processBoard(self):
         contours = self.getContours()
         cropped_chessboard = self.findBoard(contours)
+        showImage("cropped",cropped_chessboard)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
         updatedChess = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 

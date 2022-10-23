@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-img = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
+img = cv.imread('./test_images/laptop_board.jpeg',cv.IMREAD_UNCHANGED)
 analizer = ChessBoardAnalizer(img)
 
 contours = analizer.getContours()
