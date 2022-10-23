@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 import os
 import imutils
-from chessBoardDetection import ChessBoardAnalizer
+from ChessBoardDetection import ChessBoardAnalizer
 from utils import isBlankSquare, showImage
 from matplotlib import pyplot as plt
 

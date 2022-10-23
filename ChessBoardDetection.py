@@ -35,16 +35,23 @@ class ChessBoardAnalizer:
     
 
     def getContours(self):
+        #TODO: remove
+        gray = cv.cvtColor(self.board, cv.COLOR_BGR2GRAY)
+        th = cv.adaptiveThreshold(gray,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,9,2)
+        showImage("th", th)
+        
+        #FIXME: canny no es muy efectivo para el metodo de findcontours
         #Sacamos Canny para los bordes porque si sacamos los contornos directamente no funciona por el ruido
-        edges = cv.Canny(self.board, 100, 200)
+        #edges = cv.Canny(self.board, 100, 200)
         #showImage("Edges", edges)
+
+        
         #Cogemos los contornos de la imagen
-        contours, _ = cv.findContours(edges, cv.RETR_TREE,
+        contours, _ = cv.findContours(th, cv.RETR_TREE,
                                       cv.CHAIN_APPROX_SIMPLE)
         return contours
 
     def findBoard(self, contours):
-        #FIXME: Hay bug en el que con algunos tamaños más pequeños de tabla no la reconoce
         #Suma máxima del tamaño de los contornos (width + height)
         maxSum = 0
         #Aquí almacenamos el contorno más grande en perímetro/2
@@ -64,11 +71,11 @@ class ChessBoardAnalizer:
                     contornoMax = cnt
                     xSquare, ySquare, wSquare, hSquare = x, y, w, h  # Guardamos el cuadrado para recortar
         #Dibujar contornos
-        self.board = cv.drawContours(self.board, [contornoMax], -1,
-                                     (0, 255, 0), 3)
         cropped_chessboard = self.board[ySquare:ySquare + hSquare,
                                         xSquare:xSquare +
                                         wSquare]  # Recorte de la imagen
+        #Dibujamos cuadrado para ver el tablero
+        self.board = cv.drawContours(self.board, [contornoMax], -1, (0, 255, 0), 3)
         
         return cropped_chessboard
 
@@ -102,21 +109,22 @@ class ChessBoardAnalizer:
             #Cropeamos las imagenes
             chess_square = cropped_chessboard[x:x + square_size,
                                               y:y + square_size]
-
+            #showImage("square" + str(x) + str(y), chess_square)
             #Filtramos primero si es un cuadrado sin nada
             if isBlankSquare(chess_square):
                 #Si no tiene nada continuamos a la siguiente iteración 
                 continue
 
             chess_square = cv.Canny(chess_square, 100, 200)
-
+            #TODO: remove
+            #showImage("square" + str(x) + str(y), chess_square)
             for filename in os.listdir(directory):
                 f = os.path.join(directory, filename)
                 # checking if it is a file
                 if os.path.isfile(f):
                     current_img = cv.imread(f, 0)
                     best_match = getBestScaleMatch(chess_square,current_img)
-                    print("Best match is: ", best_match)
+                    #print("Best match is: ", best_match)
                     precision_values.append((f, best_match))
                
 
@@ -152,6 +160,8 @@ class ChessBoardAnalizer:
         contours = self.getContours()
         cropped_chessboard = self.findBoard(contours)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
+        #TODO: REMOVE
+        showImage("boardCropped", cropped_chessboard)
         updatedChess = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 
         #Devolvemos el nuevo objeto Chess con las posiciones de las piezas actualizadas

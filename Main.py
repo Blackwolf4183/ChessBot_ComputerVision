@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 from chess import Chess
-from chessBoardDetection import ChessBoardAnalizer
+from ChessBoardDetection import ChessBoardAnalizer
 import time
 
 #TODO: Captura de imagenes a tiempo real
