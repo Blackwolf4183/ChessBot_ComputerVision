@@ -23,14 +23,17 @@ def palettePerc(k_cluster):
     
     return perc
 
-blank_square_threshold = 0.9
+#FIXME: hay que ajustarlo para mejores resultados
+blank_square_threshold = 0.91
 
+#FIXME: hay cuadrados que no pilla bien
 def isBlankSquare(image):
-
+    
     global blank_square_threshold
 
     rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-    clt = KMeans(n_clusters=2)
+    #FIXME: con 2 clusters se raya hay que poner mas?
+    clt = KMeans(n_clusters=3)
     clt.fit(rgb_image.reshape(-1,3))
     percentages = palettePerc(clt)
     
@@ -41,6 +44,9 @@ def isBlankSquare(image):
     for perc in percentages:
         if percentages[perc] > max_val:
             max_val = percentages[perc]
+
+    #print("MAX VAL IS:" , max_val)
+    #print("percentages: " , percentages)
 
     if max_val >= blank_square_threshold:
         return True

@@ -3,6 +3,10 @@ import numpy as np
 from chess import Chess
 from ChessBoardDetection import ChessBoardAnalizer
 import time
+import warnings
+
+#para sklearn
+warnings.filterwarnings("ignore")
 
 #TODO: Captura de imagenes a tiempo real
 # ADD: Capturar hasta que haya un tablero
