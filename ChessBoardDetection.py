@@ -3,8 +3,9 @@ import cv2 as cv
 import numpy as np
 import os
 from chess import Chess
-from utils import showImage,isBlankSquare
+from utils import showImage,isBlankSquare,getBestScaleMatch
 from matplotlib import pyplot as plt
+import imutils
 
 #Poner el path relativo
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -87,6 +88,9 @@ class ChessBoardAnalizer:
         #print(squares_arr)
         return squares_arr, square_size
 
+    
+
+
     def classifyPieces(self, squares_array, square_size, cropped_chessboard):
 
         #Iteramos por todos los cuadrados y vamos añadiendo piezas
@@ -101,6 +105,7 @@ class ChessBoardAnalizer:
 
             #Filtramos primero si es un cuadrado sin nada
             if isBlankSquare(chess_square):
+                #Si no tiene nada continuamos a la siguiente iteración 
                 continue
 
             chess_square = cv.Canny(chess_square, 100, 200)
@@ -110,16 +115,12 @@ class ChessBoardAnalizer:
                 # checking if it is a file
                 if os.path.isfile(f):
                     current_img = cv.imread(f, 0)
-                    result = cv.matchTemplate(chess_square, current_img,
-                                              cv.TM_CCORR_NORMED)
-                    #showImage("result" + filename, result)
-                    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-                    if max_val > 0.1:
-                        precision_values.append((f, max_val))
-                    else:
-                        precision_values.append(("NONE", max_val))
+                    best_match = getBestScaleMatch(chess_square,current_img)
+                    print("Best match is: ", best_match)
+                    precision_values.append((f, best_match))
+               
 
-                    #print("Max val is: ", precision_values)
+
 
             #print(precision_values)
 
@@ -138,10 +139,8 @@ class ChessBoardAnalizer:
 
             #print("x: ", x_piece, " y: ", y_piece, " piece: " , filename2piece[top_piece])
 
-            print("BEST MATCH: " , top_piece)
+            #print("BEST MATCH: " , top_piece)
 
-            top_value = -100
-            top_piece = ""
 
             #Vaciamos array
             precision_values.clear()
@@ -159,46 +158,4 @@ class ChessBoardAnalizer:
         return updatedChess
 
 
-""" 
-#####################################################################
 
-#TODO: temporal
-pawn_img = cv.imread('./template_images/pawn.png',cv.IMREAD_UNCHANGED)
-peon_w = pawn_img.shape[1]
-peon_h = pawn_img.shape[0]
-
-
-num_p = 0
-
-threshold = 0.6
-
-def detectarPeon(cell,count): #FIXME: temporal
-    global num_p
-    result = cv.matchTemplate(cell,pawn_img,cv.TM_CCOEFF_NORMED)
-    #if count == 55: 
-    #showImage("Celda" + str(count), result)
-    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-    print("PRECISION: " , max_val)
-    if max_val >= threshold: 
-        num_p = num_p + 1 
-        print("PEON")
-        
-    
-
-count = 0 #TODO: temporal
-for (x,y) in squares_arr: #Recorremos los cuadrados pintando cada contorno
-    top_left = (x,y)
-    bottom_right = (x+square_size,y+square_size)
-    cv.rectangle(cropped_chessboard, top_left, bottom_right, color=(0, 255, 0), thickness=2, lineType=cv.LINE_4)
-
-    #Cropeamos las imagenes
-    chess_square = cropped_chessboard[x:x+square_size,y:y+square_size]
-    detectarPeon(chess_square,count)
-    #showImage("Celda" + str(count), chess_square)
-
-
-showImage("Cuadrado", cropped_chessboard) # Enseñar cuadrados con los contornos dibujados
-
-
-print(num_p)
-##################################################################### """

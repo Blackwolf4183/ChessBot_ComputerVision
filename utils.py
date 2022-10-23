@@ -2,6 +2,7 @@ import cv2 as cv
 from collections import Counter
 import numpy as np
 from sklearn.cluster import KMeans
+import imutils
 
 # Funcion para mostrar la imagen
 def showImage(name, img, w=800, h=800):
@@ -46,5 +47,39 @@ def isBlankSquare(image):
     else:
         return False
 
+def getBestScaleMatch(original,template):
 
+        template = cv.Canny(template,100,200)
+        (tH, tW) = template.shape[:2]
+
+        found = None
+        bestMatch = 0.0
+
+        #FIXME: los parametros de linspace se puede alterar para buscar cuales son los mejores
+        for scale in np.linspace(0.2, 1, 20)[::-1]:
+            #reescalamos la imagen original
+            resized = imutils.resize(original, width = int(original.shape[1] * scale))
+
+            #cogemos el ratio
+            r = original.shape[1] / float(resized.shape[1])
+
+            #Si el template es más grande que la imagen cambiada de tamaño
+            if resized.shape[0] < tH or resized.shape[1] < tW:
+                break
+
+            #Aplicamos Canny a la imagen original
+            original_edged = cv.Canny(resized,100,200)
+            result = cv.matchTemplate(original_edged, template, cv.TM_CCORR_NORMED)
+            #Calculamos la precisión del match
+            _, maxVal, _, maxLoc = cv.minMaxLoc(result)
+
+            #print("maxVal is: " ,maxVal)
+
+            if found is None or maxVal > found[0]:
+                found = (maxVal, maxLoc, r)
+
+            if maxVal > bestMatch:
+                bestMatch = maxVal
+
+        return bestMatch
     

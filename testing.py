@@ -24,54 +24,56 @@ chess_square = cropped_chessboard[square_size*6:square_size*6+square_size,square
 showImage("cuadrado",chess_square)
 
 
-print(isBlankSquare(chess_square))
+#Cogemos la imagen template y la pasamos a canny
+needle_img = cv.imread("./template_images/black_pawn.png",0)
+
+
+#Scamos sus dimensiones
 
 
 
 
-needle_img = cv.imread("./template_images/white_knight.png",0)
-needle_img = cv.Canny(needle_img,100,200)
-(tH, tW) = needle_img.shape[:2]
-
-#showImage("board",cropped_chessboard)
-#showImage("needle",needle_img)
-
-found = None
-
-for scale in np.linspace(0.2, 2, 20)[::-1]:
-    resized = imutils.resize(chess_square, width = int(chess_square.shape[1] * scale))
-    #showImage("result" ,result)
-    r = chess_square.shape[1] / float(resized.shape[1])
-
-    #Si el template es más grande que la imagen cambiada de tamaño
-    if resized.shape[0] < tH or resized.shape[1] < tW:
-        break
-
-    chess_square_edged = cv.Canny(resized,100,200)
-    result = cv.matchTemplate(chess_square_edged, needle_img, cv.TM_CCORR_NORMED)
-    _, maxVal, _, maxLoc = cv.minMaxLoc(result)
-
-    print("maxVal is: " ,maxVal)
-
-    #DEBUG
-    clone = np.dstack([chess_square_edged, chess_square_edged, chess_square_edged])
-    cv.rectangle(clone, (maxLoc[0], maxLoc[1]),
-        (maxLoc[0] + tW, maxLoc[1] + tH), (0, 0, 255), 2)
-    cv.imshow("Visualize", clone)
-    ####
-
-    if found is None or maxVal > found[0]:
-        found = (maxVal, maxLoc, r)
-
-    _, maxLoc, r = found
-    (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
-    (endX, endY) = (int((maxLoc[0] + tW) * r), int((maxLoc[1] + tH) * r))
-    # draw a bounding box around the detected result and display the image
-    cv.rectangle(chess_square, (startX, startY), (endX, endY), (0, 0, 255), 2)
-    cv.imshow("Image", chess_square)
-    cv.waitKey(0)
-
-    
 
 
+
+
+def getBestScaleMatch(original,template):
+
+    template = cv.Canny(template,100,200)
+    (tH, tW) = template.shape[:2]
+
+    found = None
+    bestMatch = 0.0
+
+    for scale in np.linspace(0.2, 1, 20)[::-1]:
+        #reescalamos la imagen original
+        resized = imutils.resize(original, width = int(original.shape[1] * scale))
+
+        #cogemos el ratio
+        r = original.shape[1] / float(resized.shape[1])
+
+        #Si el template es más grande que la imagen cambiada de tamaño
+        if resized.shape[0] < tH or resized.shape[1] < tW:
+            break
+
+        #Aplicamos Canny a la imagen original
+        original_edged = cv.Canny(resized,100,200)
+        result = cv.matchTemplate(original_edged, template, cv.TM_CCORR_NORMED)
+        #Calculamos la precisión del match
+        _, maxVal, _, maxLoc = cv.minMaxLoc(result)
+
+        #print("maxVal is: " ,maxVal)
+
+        if found is None or maxVal > found[0]:
+            found = (maxVal, maxLoc, r)
+
+        if maxVal > bestMatch:
+            bestMatch = maxVal
+
+    return bestMatch
+
+
+print(getBestScaleMatch(chess_square,needle_img))
+
+cv.waitKey(0)
 cv.destroyAllWindows()
