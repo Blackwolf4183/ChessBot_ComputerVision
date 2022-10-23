@@ -19,10 +19,11 @@ import time
 #INFO: #https://en.wikipedia.org/wiki/Board_representation_(computer_chess)
 #INFO: https://github.com/jhlywa/chess.js LIBRERIA DE JS
 
+#INFO: variable para contar tiempo de inicio
 st = time.time()
 
 #Importamos imagen
-tablero = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
+tablero = cv.imread('./test_images/test_board_6.png',cv.IMREAD_UNCHANGED)
 
 chessBoardAnalizer = ChessBoardAnalizer(tablero)
 resulting_board = chessBoardAnalizer.processBoard()
@@ -43,25 +44,3 @@ cv.destroyAllWindows()
 
 
 
-
-"""
-
-#el mejor match
-min_val, max_val, min_loc, max_loc = cv.minMaxLoc(result)
-
-
-if max_val >= threshold:
-    print("Se ha encontrado un peon con confidence: %f",max_val)
-
-    # dimensiones del peon
-    peon_w = pawn_img.shape[1]
-    peon_h = pawn_img.shape[0]
-
-    top_left = max_loc
-    bottom_right = (top_left[0] + peon_w,top_left[1] + peon_h)
-
-    cv.rectangle(chessboard,top_left,bottom_right,color=(0,255,0),thickness=2,lineType=cv.LINE_4)
-    cv.imshow("Result", chessboard)
-    cv.waitKey(0)
-
-"""

@@ -3,6 +3,8 @@ import cv2 as cv
 import numpy as np
 import os
 from chess import Chess
+from utils import showImage,isBlankSquare
+from matplotlib import pyplot as plt
 
 #Poner el path relativo
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -29,13 +31,7 @@ class ChessBoardAnalizer:
     def __init__(self, image):
         self.board = image
 
-    # Funcion para mostrar la imagen
-    def showImage(name, img, w=800, h=800):
-        # Nombro la ventana
-        cv.namedWindow(name, cv.WINDOW_NORMAL)
-        # Reajustamos el tamaño de la ventana
-        cv.resizeWindow(name, w, h)
-        cv.imshow(name, img)
+    
 
     def getContours(self):
         #Sacamos Canny para los bordes porque si sacamos los contornos directamente no funciona por el ruido
@@ -47,6 +43,7 @@ class ChessBoardAnalizer:
         return contours
 
     def findBoard(self, contours):
+        #FIXME: Hay bug en el que con algunos tamaños más pequeños de tabla no la reconoce
         #Suma máxima del tamaño de los contornos (width + height)
         maxSum = 0
         #Aquí almacenamos el contorno más grande en perímetro/2
@@ -56,11 +53,11 @@ class ChessBoardAnalizer:
         #Iteramos los contornos
         for cnt in contours:
             x1, y1 = cnt[0][0]
-            approx = cv.approxPolyDP(cnt, 0.01 * cv.arcLength(cnt, True), True)
+            approx = cv.approxPolyDP(cnt, 0.05 * cv.arcLength(cnt, True), True)
             if len(approx) == 4:
                 x, y, w, h = cv.boundingRect(cnt)
                 ratio = float(w) / h
-
+                
                 if w + h > maxSum and 0.9 <= ratio <= 1.1:  # Buscamos el cuadrado mas grande con la suma de ancho y alto
                     maxSum = w + h
                     contornoMax = cnt
@@ -71,7 +68,7 @@ class ChessBoardAnalizer:
         cropped_chessboard = self.board[ySquare:ySquare + hSquare,
                                         xSquare:xSquare +
                                         wSquare]  # Recorte de la imagen
-
+        
         return cropped_chessboard
 
     def divideSquares(self, cropped_board):
@@ -101,6 +98,11 @@ class ChessBoardAnalizer:
             #Cropeamos las imagenes
             chess_square = cropped_chessboard[x:x + square_size,
                                               y:y + square_size]
+
+            #Filtramos primero si es un cuadrado sin nada
+            if isBlankSquare(chess_square):
+                continue
+
             chess_square = cv.Canny(chess_square, 100, 200)
 
             for filename in os.listdir(directory):
@@ -136,7 +138,7 @@ class ChessBoardAnalizer:
 
             #print("x: ", x_piece, " y: ", y_piece, " piece: " , filename2piece[top_piece])
 
-            #print("BEST MATCH: " , top_piece)
+            print("BEST MATCH: " , top_piece)
 
             top_value = -100
             top_piece = ""

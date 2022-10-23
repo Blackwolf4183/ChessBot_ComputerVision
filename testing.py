@@ -1,89 +1,77 @@
-from tkinter.messagebox import showinfo
 import cv2 as cv
 import numpy as np
 import os
-from chess import Chess
 import imutils
+from chessBoardDetection import ChessBoardAnalizer
+from utils import isBlankSquare, showImage
+from matplotlib import pyplot as plt
+
 
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-def showImage(name,img,w=800,h=800): # Funcion para mostrar la imagen
-    # Nombro la ventana
-    cv.namedWindow(name, cv.WINDOW_NORMAL)
-    # Reajustamos el tamaño de la ventana
-    cv.resizeWindow(name, w, h)
-    cv.imshow(name,img)
+img = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
+analizer = ChessBoardAnalizer(img)
 
-img = cv.imread('./test_images/test_image.png',0)
+contours = analizer.getContours()
+cropped_chessboard = analizer.findBoard(contours)
+squares_array, square_size = analizer.divideSquares(cropped_chessboard)
 
-edges = cv.Canny(img,100,200)
-#Cogemos los contornos de la imagen
-contours, _ = cv.findContours(edges,cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
+#Primer cuadrado del tablero con sus bordes en canny
+chess_square = cropped_chessboard[square_size*6:square_size*6+square_size,square_size*1:square_size*1+square_size]
 
-#Suma máxima del tamaño de los contornos (width + height)
-maxSum = 0
-#Aquí almacenamos el contorno más grande en perímetro/2
-contornoMax = []
-#Variables para luego cropear la imagen
-xSquare, ySquare, wSquare, hSquare = 0,0,0,0
-
-
-#Iteramos los contornos
-for cnt in contours:
-    x1,y1 = cnt[0][0]
-    approx = cv.approxPolyDP(cnt,0.01*cv.arcLength(cnt,True),True)
-    if len(approx) == 4:
-        x, y, w, h = cv.boundingRect(cnt)
-        ratio = float(w)/h
-
-        if w + h > maxSum and 0.9 <= ratio <= 1.1: # Buscamos el cuadrado mas grande con la suma de ancho y alto
-                maxSum = w + h
-                contornoMax = cnt
-                xSquare,ySquare,wSquare,hSquare = x,y,w,h # Guardamos el cuadrado para recortar
-
-
-#Texto y dibujar contornos
-img = cv.drawContours(img,[contornoMax],-1,(0,255,0),3)
-cropped_chessboard = img[ySquare:ySquare+hSquare, xSquare:xSquare+wSquare] # Recorte de la imagen
-
-
-square_edges = cv.Canny(cropped_chessboard,100,200)
-
-img_width = square_edges.shape[0]
-square_size = int(img_width/8) # Tamaño del lado del cuadrado
-
-#Array que contenga las posiciones de arriba izquierda de los cuadrados
-squares_arr = []
-
-#Añadimos las posiciones en la pantalla de los cuadrados
-for f in range(8):
-    for c in range(8):
-        squares_arr.append((int(f * square_size),int(c * square_size)))
-
-
-first_Square = square_edges[0] #(x,y)
-
-chess_square = cropped_chessboard[first_Square[0]:first_Square[0]+square_size,first_Square[1]:first_Square[1]+square_size]
-chess_square = cv.Canny(chess_square,100,200)
 
 showImage("cuadrado",chess_square)
-needle_img = cv.imread("./template_images/black_king.png",0)
+
+
+print(isBlankSquare(chess_square))
+
+
+
+
+needle_img = cv.imread("./template_images/white_knight.png",0)
+needle_img = cv.Canny(needle_img,100,200)
 (tH, tW) = needle_img.shape[:2]
 
-showImage("board",cropped_chessboard)
-showImage("needle",needle_img)
+#showImage("board",cropped_chessboard)
+#showImage("needle",needle_img)
 
 found = None
 
-for scale in np.linspace(0.2, 1.0, 20)[::-1]:
-    resized = imutils.resize(needle_img, width = int(needle_img.shape[1] * scale))
-    #result = cv.matchTemplate(cropped_chessboard,needle_img,cv.TM_CCORR_NORMED)
+for scale in np.linspace(0.2, 2, 20)[::-1]:
+    resized = imutils.resize(chess_square, width = int(chess_square.shape[1] * scale))
     #showImage("result" ,result)
-    r = needle_img.shape[1] / float(resized.shape[1])
+    r = chess_square.shape[1] / float(resized.shape[1])
 
+    #Si el template es más grande que la imagen cambiada de tamaño
     if resized.shape[0] < tH or resized.shape[1] < tW:
         break
 
-cv.waitKey(0)
+    chess_square_edged = cv.Canny(resized,100,200)
+    result = cv.matchTemplate(chess_square_edged, needle_img, cv.TM_CCORR_NORMED)
+    _, maxVal, _, maxLoc = cv.minMaxLoc(result)
+
+    print("maxVal is: " ,maxVal)
+
+    #DEBUG
+    clone = np.dstack([chess_square_edged, chess_square_edged, chess_square_edged])
+    cv.rectangle(clone, (maxLoc[0], maxLoc[1]),
+        (maxLoc[0] + tW, maxLoc[1] + tH), (0, 0, 255), 2)
+    cv.imshow("Visualize", clone)
+    ####
+
+    if found is None or maxVal > found[0]:
+        found = (maxVal, maxLoc, r)
+
+    _, maxLoc, r = found
+    (startX, startY) = (int(maxLoc[0] * r), int(maxLoc[1] * r))
+    (endX, endY) = (int((maxLoc[0] + tW) * r), int((maxLoc[1] + tH) * r))
+    # draw a bounding box around the detected result and display the image
+    cv.rectangle(chess_square, (startX, startY), (endX, endY), (0, 0, 255), 2)
+    cv.imshow("Image", chess_square)
+    cv.waitKey(0)
+
+    
+
+
 cv.destroyAllWindows()
