@@ -27,7 +27,7 @@ warnings.filterwarnings("ignore")
 st = time.time()
 
 #Importamos imagen
-tablero = cv.imread('./test_images/laptop_board.png',cv.IMREAD_UNCHANGED)
+tablero = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
 
 chessBoardAnalizer = ChessBoardAnalizer(tablero)
 resulting_board = chessBoardAnalizer.processBoard()

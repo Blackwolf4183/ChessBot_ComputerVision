@@ -3,7 +3,7 @@ import cv2 as cv
 import numpy as np
 import os
 from chess import Chess
-from utils import showImage,isBlankSquare,getBestScaleMatch
+from utils import showImage,isBlankSquare,getBestScaleMatch,isPieceWhite
 from matplotlib import pyplot as plt
 import imutils
 
@@ -88,7 +88,6 @@ class ChessBoardAnalizer:
         #print(squares_arr)
         return squares_arr, square_size
 
-    
 
 
     def classifyPieces(self, squares_array, square_size, cropped_chessboard):
@@ -134,7 +133,13 @@ class ChessBoardAnalizer:
             #posicionamiento en tablero virtual
             x_piece = int(x / int(square_size))
             y_piece = int(y / int(square_size))
-            chess.setPiece(x_piece, y_piece, self.filename2piece[top_piece])
+            
+            piece_value = self.filename2piece[top_piece]
+
+            if(isPieceWhite(chess_square)):
+                piece_value = -piece_value
+
+            chess.setPiece(x_piece, y_piece, piece_value)
 
             #print("x: ", x_piece, " y: ", y_piece, " piece: " , filename2piece[top_piece])
 
