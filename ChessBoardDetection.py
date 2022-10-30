@@ -25,8 +25,7 @@ class ChessBoardAnalizer:
         "./template_images\\white_bishop.png": 3,
         "./template_images\\white_rook.png": 4,
         "./template_images\\white_queen.png": 5,
-        "./template_images\\white_king.png": 6,
-        "NONE": 0
+        "./template_images\\white_king.png": 6
     }
 
     def __init__(self, image):
@@ -39,12 +38,6 @@ class ChessBoardAnalizer:
         gray = cv.cvtColor(self.board, cv.COLOR_BGR2GRAY)
         th = cv.adaptiveThreshold(gray,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,9,2)
         #showImage("th", th)
-        
-        #FIXME: canny no es muy efectivo para el metodo de findcontours
-        #Sacamos Canny para los bordes porque si sacamos los contornos directamente no funciona por el ruido
-        #edges = cv.Canny(self.board, 100, 200)
-        #showImage("Edges", edges)
-
         
         #Cogemos los contornos de la imagen
         contours, _ = cv.findContours(th, cv.RETR_TREE,
@@ -71,9 +64,10 @@ class ChessBoardAnalizer:
                     contornoMax = cnt
                     xSquare, ySquare, wSquare, hSquare = x, y, w, h  # Guardamos el cuadrado para recortar
         #Dibujar contornos
-        cropped_chessboard = self.board[ySquare:ySquare + hSquare,
-                                        xSquare:xSquare +
-                                        wSquare]  # Recorte de la imagen
+        #REVIEW: le hemos quitado 5 pixeles por cada lado ya que con esto se queda perfecta la imagen en cada intento
+        cropped_chessboard = self.board[ySquare+5:ySquare + hSquare -5,
+                                        xSquare+5:xSquare +
+                                        wSquare - 5]  # Recorte de la imagen
         #Dibujamos cuadrado para ver el tablero
         self.board = cv.drawContours(self.board, [contornoMax], -1, (0, 255, 0), 3)
         
@@ -156,7 +150,7 @@ class ChessBoardAnalizer:
     def processBoard(self):
         contours = self.getContours()
         cropped_chessboard = self.findBoard(contours)
-        showImage("cropped",cropped_chessboard)
+        #showImage("cropped",cropped_chessboard)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
         updatedChess = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 
