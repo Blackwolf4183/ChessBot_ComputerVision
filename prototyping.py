@@ -47,11 +47,10 @@ img = cv.imread('./test_images/test_board_5.png')
 
 analizer = ChessBoardAnalizer(img)
 
-st = time.time()
+
 contours = analizer.getContours()
 cropped_chessboard = analizer.findBoard(contours)
-et = time.time()
-print("time: " ,et - st)
+
 
 #showImage("Cropped", cropped_chessboard)
 
@@ -62,10 +61,11 @@ chess_square = cropped_chessboard[square_size*7:square_size*7+square_size,square
 showImage("Cuadrado",chess_square)
 
 
-
-
-print(isPieceWhite(chess_square))
-
+st = time.time()
+for i in range(64):
+    isBlankSquare(chess_square)
+et = time.time()
+print("time: " ,et - st)
 
 
 

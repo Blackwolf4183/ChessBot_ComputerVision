@@ -4,6 +4,7 @@ import numpy as np
 import cv2 as cv
 from ChessBoardDetection import ChessBoardAnalizer
 import warnings
+import time
 
 warnings.filterwarnings("ignore")
 
@@ -97,11 +98,42 @@ def testImageToChess(filename):
         else:
             print(" ----> INCORRECT")
 
+def calculateAvgExecutionTime():
+    print("Calculating average execution time...")
+    n_files = 4
+    iteration = 0
+    total_time = 0
+
+    for filename in os.listdir(directory):
+        f = os.path.join(directory, filename)
+        # checking if it is a file
+        if os.path.isfile(f):
+            iteration += 1
+            if(iteration > n_files): break
+            st1 = time.time()
+            tablero = cv.imread(f, cv.IMREAD_UNCHANGED)
+            chessBoardAnalizer = ChessBoardAnalizer(tablero)
+            chessBoardAnalizer.processBoard()
+            et1 = time.time()
+            total_time += et1-st1
+
+    print("\tAveragage execution time: ", total_time/4 , "seconds")
+    
 
 print("Running tests...")
+
+st = time.time()
 
 for filename in os.listdir(directory):
     f = os.path.join(directory, filename)
     # checking if it is a file
     if os.path.isfile(f):
         testImageToChess(f)
+
+
+calculateAvgExecutionTime()
+
+et = time.time()
+
+print("")
+print("\t\tTime employed in execution: ", et-st, " seconds")
