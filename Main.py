@@ -19,7 +19,6 @@ warnings.filterwarnings("ignore")
 # ADD: Calcular turno (Quizás con los cuadrados amarillos)
 
 #TODO: Si esta jugando partida analizar tablero
-# ADD: Crear clases para piezas y hacer todas las piezas objetos
 #INFO: #https://en.wikipedia.org/wiki/Board_representation_(computer_chess)
 #INFO: https://github.com/jhlywa/chess.js LIBRERIA DE JS
 
@@ -27,7 +26,7 @@ warnings.filterwarnings("ignore")
 st = time.time()
 
 #Importamos imagen
-tablero = cv.imread('./test_images/test_image.png',cv.IMREAD_UNCHANGED)
+tablero = cv.imread('./test_images/test_board.png',cv.IMREAD_UNCHANGED)
 
 chessBoardAnalizer = ChessBoardAnalizer(tablero)
 resulting_board = chessBoardAnalizer.processBoard()

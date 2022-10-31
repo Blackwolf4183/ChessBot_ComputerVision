@@ -19,13 +19,7 @@ class ChessBoardAnalizer:
         "./template_images\\black_bishop.png": -3,
         "./template_images\\black_rook.png": -4,
         "./template_images\\black_queen.png": -5,
-        "./template_images\\black_king.png": -6,
-        "./template_images\\white_pawn.png": 1,
-        "./template_images\\white_knight.png": 2,
-        "./template_images\\white_bishop.png": 3,
-        "./template_images\\white_rook.png": 4,
-        "./template_images\\white_queen.png": 5,
-        "./template_images\\white_king.png": 6
+        "./template_images\\black_king.png": -6
     }
 
     def __init__(self, image):
