@@ -12,34 +12,6 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 
-def isPieceWhite(cropped_square):
-
-    s_window = 5
-
-    #Pasamos a gris
-    cropped_square = cv.cvtColor(cropped_square,cv.COLOR_BGR2GRAY)
-    
-    w = cropped_square.shape[0]
-    h = cropped_square.shape[1]
-    center = (int(w/2),int(h/2))
-    #print("w, h, center", w, h, center)
-    #Cogemos una unica ventana en el centro de la imagen que es donde va a estar la pieza
-    _, binarized_square = cv.threshold(cropped_square,127,255,cv.THRESH_BINARY)
-    #marked_window = cv.rectangle(binarized_square, (center[0]-s_window,center[1]+int(w/4)), (center[0]+s_window,center[1]+int(w/3)), (255,0,0), 1)
-    #showImage("Region", marked_window)
-    cropped_square = binarized_square[center[1]+int(h/3.5):center[1]+int(h/3),center[0]-s_window:center[0]+s_window]
-    #showImage("Cropped_region",cropped_square)
-
-    whitePixels = 0
-    flattened_img = np.array(cropped_square).flatten()
-    for pixel in flattened_img:
-        if pixel > 100: whitePixels = whitePixels +1
-
-    #Si hay una proporcion grande de pixeles blancos (la ventana quizas se ha desplazado hacia un borde un poco)
-    if whitePixels > int(flattened_img.shape[0]/1.5):
-        return True
-    else: 
-        return False
 
 
 
@@ -57,15 +29,16 @@ cropped_chessboard = analizer.findBoard(contours)
 squares_array, square_size = analizer.divideSquares(cropped_chessboard)
 
 #Primer cuadrado del tablero con sus bordes en canny
-chess_square = cropped_chessboard[square_size*7:square_size*7+square_size,square_size*0:square_size*0+square_size]
+chess_square = cropped_chessboard[square_size*4:square_size*4+square_size,square_size*2:square_size*2+square_size]
 showImage("Cuadrado",chess_square)
 
 
 st = time.time()
 
 #isBlankSquare(chess_square)
-for i in range(64):
-    isBlankSquare2(chess_square)
+for (x,y) in squares_array:
+    chess_square = cropped_chessboard[square_size*x:square_size*x+square_size,square_size*y:square_size*y+square_size]
+    print(isBlankSquare2(chess_square))
 
 et = time.time()
 print("time: " ,et - st)

@@ -29,13 +29,14 @@ class ChessBoardAnalizer:
 
     def getContours(self):
 
+        #Pasamos a gris la imagen
         gray = cv.cvtColor(self.board, cv.COLOR_BGR2GRAY)
+        #Hacemos un threshold
         th = cv.adaptiveThreshold(gray,255,cv.ADAPTIVE_THRESH_GAUSSIAN_C,cv.THRESH_BINARY,9,2)
-        #showImage("th", th)
+        #showImage("Threshold Image", th)
         
         #Cogemos los contornos de la imagen
-        contours, _ = cv.findContours(th, cv.RETR_TREE,
-                                      cv.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv.findContours(th, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
         return contours
 
     def findBoard(self, contours):
@@ -47,7 +48,6 @@ class ChessBoardAnalizer:
         xSquare, ySquare, wSquare, hSquare = 0, 0, 0, 0
         #Iteramos los contornos
         for cnt in contours:
-            x1, y1 = cnt[0][0]
             approx = cv.approxPolyDP(cnt, 0.05 * cv.arcLength(cnt, True), True)
             if len(approx) == 4:
                 x, y, w, h = cv.boundingRect(cnt)
@@ -57,6 +57,7 @@ class ChessBoardAnalizer:
                     maxSum = w + h
                     contornoMax = cnt
                     xSquare, ySquare, wSquare, hSquare = x, y, w, h  # Guardamos el cuadrado para recortar
+
         #Dibujar contornos
         #REVIEW: le hemos quitado 5 pixeles por cada lado ya que con esto se queda perfecta la imagen en cada intento
         cropped_chessboard = self.board[ySquare+5:ySquare + hSquare -5,
@@ -68,18 +69,18 @@ class ChessBoardAnalizer:
         return cropped_chessboard
 
     def divideSquares(self, cropped_board):
-        #Sacamos la anchura del tablero
-        img_width = cropped_board.shape[0]
+
+        img_width = cropped_board.shape[0] #Anchura del tablero
         square_size = int(img_width / 8)  # Tamaño del lado del cuadrado
-        #Array que contenga las posiciones de arriba izquierda de los cuadrados
-        squares_arr = []
+
+        squares_arr = [] #Array que contenga las posiciones de arriba izquierda de los cuadrados
+
         #Añadimos las posiciones en la pantalla de los cuadrados
         for f in range(8):
             for c in range(8):
                 squares_arr.append(
                     (int(f * square_size), int(c * square_size)))
 
-        #print(squares_arr)
         return squares_arr, square_size
 
 
@@ -96,15 +97,12 @@ class ChessBoardAnalizer:
             chess_square = cropped_chessboard[x:x + square_size,
                                               y:y + square_size]
             #showImage("square" + str(x) + str(y), chess_square)
-            #Filtramos primero si es un cuadrado sin nada
-            #FIXME: cambiar metodo
-            if isBlankSquare2(chess_square):
-                #Si no tiene nada continuamos a la siguiente iteración 
-                continue
 
-            #FIXME: no hay que hacerle canny ya lo hace la función
-            #chess_square = cv.Canny(chess_square, 100, 200)
-            #TODO: remove
+            #Filtramos primero si es un cuadrado sin nada
+            if isBlankSquare2(chess_square): #REVIEW: probar si isBlankSquare2 es mejor que 1 
+                continue #Si no tiene nada continuamos a la siguiente iteración 
+
+
             #showImage("square" + str(x) + str(y), chess_square)
             for filename in os.listdir(directory):
                 f = os.path.join(directory, filename)
@@ -118,7 +116,7 @@ class ChessBoardAnalizer:
             #print(precision_values)
 
             top_piece = "",
-            top_value = -100
+            top_value = -100 #TODO: cambiar por -math.infinite
 
             for (name, precision) in precision_values:
                 if precision > top_value:
@@ -131,15 +129,14 @@ class ChessBoardAnalizer:
             
             piece_value = self.filename2piece[top_piece]
 
+            #Evaluamos si la pieza es blanca para cambiarle el valor
             if(isPieceWhite(chess_square)):
                 piece_value = -piece_value
 
             chess.setPiece(x_piece, y_piece, piece_value)
 
             #print("x: ", x_piece, " y: ", y_piece, " piece: " , filename2piece[top_piece])
-
             #print("BEST MATCH: " , top_piece)
-
 
             #Vaciamos array
             precision_values.clear()

@@ -64,6 +64,17 @@ test_conf_3 = [
     4, 0, 3, 0, 6, -3, 0, 0
 ]
 
+test_conf_4_list = ["./test_images\\test_board_1.png","./test_images\\test_board_10.png"]
+test_conf_4 = [
+    0, -2, -3, 2, 0, 0, 0, -4,
+    0, 0, -1, -1, -3, 0, 0, -1,
+    -4, 0, 0, 0, 0, -6,-1, -2,
+    0, -1, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 1, 0, 0,
+    0, 0, 1, 1, 0, 0, 1, 3,
+    1, 0, 0, 0, 1, 0, 0, 1,
+    4, 0, 3, 5, 0, 4, 6, 0
+]
 
 def testImageToChess(filename):
 
@@ -94,6 +105,12 @@ def testImageToChess(filename):
     elif filename in test_conf_3_list:
         if np.allclose(resulting_board.getInnerMatrix(),
                        np.reshape(test_conf_3, (8, 8))):
+            print(" ----> Correct!")
+        else:
+            print(" ----> INCORRECT")
+    elif filename in test_conf_4_list:
+        if np.allclose(resulting_board.getInnerMatrix(),
+                       np.reshape(test_conf_4, (8, 8))):
             print(" ----> Correct!")
         else:
             print(" ----> INCORRECT")

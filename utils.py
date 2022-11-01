@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 import imutils
 
-# Funcion para mostrar la imagen
+# Funcion para mostrar la imagen con tamaño variable
 def showImage(name, img, w=800, h=800):
     cv.namedWindow(name, cv.WINDOW_NORMAL) # Nombro la ventana
     cv.resizeWindow(name, w, h) # Reajustamos el tamaño de la ventana
@@ -14,7 +14,6 @@ def showImage(name, img, w=800, h=800):
 def palettePerc(k_cluster):
     
     n_pixels = len(k_cluster.labels_)
-    #Numero de pixeles por cluster
     counter = Counter(k_cluster.labels_) 
     perc = {}
     for i in counter:
@@ -23,7 +22,7 @@ def palettePerc(k_cluster):
     
     return perc
 
-#FIXME: hay que ajustarlo para mejores resultados
+
 blank_square_threshold = 0.91
 
 
@@ -32,7 +31,6 @@ def isBlankSquare(image):
     global blank_square_threshold
 
     rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-
 
     clt = KMeans(n_clusters=3)
     clt.fit(rgb_image.reshape(-1,3))
@@ -46,13 +44,8 @@ def isBlankSquare(image):
         if percentages[perc] > max_val:
             max_val = percentages[perc]
 
-    #print("MAX VAL IS:" , max_val)
-    #print("percentages: " , percentages)
+    return max_val >= blank_square_threshold
 
-    if max_val >= blank_square_threshold:
-        return True
-    else:
-        return False
 
 
 
@@ -65,7 +58,6 @@ def isPieceWhite(cropped_square):
     w = cropped_square.shape[0]
     h = cropped_square.shape[1]
     center = (int(w/2),int(h/2))
-    #print("w, h, center", w, h, center)
     #Cogemos una unica ventana en el centro de la imagen que es donde va a estar la pieza
     _, binarized_square = cv.threshold(cropped_square,127,255,cv.THRESH_BINARY)
     #marked_window = cv.rectangle(binarized_square, (center[0]-s_window,center[1]+int(w/4)), (center[0]+s_window,center[1]+int(w/3)), (255,0,0), 1)
@@ -79,10 +71,8 @@ def isPieceWhite(cropped_square):
         if pixel > 100: whitePixels = whitePixels +1
 
     #Si hay una proporcion grande de pixeles blancos (la ventana quizas se ha desplazado hacia un borde un poco)
-    if whitePixels > int(flattened_img.shape[0]/1.5):
-        return True
-    else: 
-        return False
+    return whitePixels > int(flattened_img.shape[0]/1.5)
+
 
 def getBestScaleMatch(original,template):
             
@@ -169,8 +159,5 @@ def isBlankSquare2(image):
         if percentages[perc] > max_val:
             max_val = percentages[perc]
 
-    if max_val >= blank_square_threshold:
-        return True
-    else:
-        return False
+    return max_val >= blank_square_threshold
 
