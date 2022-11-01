@@ -3,7 +3,7 @@ import numpy as np
 import os
 import imutils
 from ChessBoardDetection import ChessBoardAnalizer
-from utils import isBlankSquare, showImage,getBestScaleMatch
+from utils import isBlankSquare,isBlankSquare2, showImage,getBestScaleMatch
 from matplotlib import pyplot as plt
 import time
 import math
@@ -62,8 +62,11 @@ showImage("Cuadrado",chess_square)
 
 
 st = time.time()
+
+#isBlankSquare(chess_square)
 for i in range(64):
     isBlankSquare(chess_square)
+
 et = time.time()
 print("time: " ,et - st)
 

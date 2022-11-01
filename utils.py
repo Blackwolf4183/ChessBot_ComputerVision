@@ -26,13 +26,14 @@ def palettePerc(k_cluster):
 #FIXME: hay que ajustarlo para mejores resultados
 blank_square_threshold = 0.91
 
-#FIXME: hay cuadrados que no pilla bien
+
 def isBlankSquare(image):
     
     global blank_square_threshold
 
     rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-    #FIXME: con 2 clusters se raya hay que poner mas?
+
+
     clt = KMeans(n_clusters=3)
     clt.fit(rgb_image.reshape(-1,3))
     percentages = palettePerc(clt)
@@ -52,6 +53,8 @@ def isBlankSquare(image):
         return True
     else:
         return False
+
+
 
 def isPieceWhite(cropped_square):
     s_window = 5
@@ -119,3 +122,55 @@ def getBestScaleMatch(original,template):
 
         return bestMatch
     
+
+
+
+
+#FIXME: intentos de mejora de kmeans
+def countPixels(clustered_image,center,img_size):
+
+    ocurrences = {}
+
+    counter = 0
+    for color in center:
+        amount = np.count_nonzero(np.all(np.array(clustered_image)==np.array(color),axis=2))
+        ocurrences[counter] = round(amount/img_size,2)
+        counter += 1
+        
+    return ocurrences
+
+
+def isBlankSquare2(image):
+    global blank_square_threshold
+
+    rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+    flattened_img = rgb_image.reshape((-1,3))
+    flattened_img = np.float32(flattened_img)
+
+    K = 3
+    it = 8
+
+    criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, it, 1.0)
+    _,label,center=cv.kmeans(flattened_img,K,None,criteria,it,cv.KMEANS_RANDOM_CENTERS)
+    center = np.uint8(center)
+
+    res = center[label.flatten()]
+    res2 = res.reshape((rgb_image.shape))
+    #showImage("res",res2)
+
+    #Obtenemos el array con las apariciones de cada pixel
+    percentages = countPixels(res2,center,len(flattened_img))
+    #print(percentages)
+
+
+    max_val = 0
+    #Iteramos en un diccionario {0: 0.95, 1: 0.02, 2:0.05 ...}
+    for perc in percentages:
+        if percentages[perc] > max_val:
+            max_val = percentages[perc]
+
+    if max_val >= blank_square_threshold:
+        return True
+    else:
+        return False
+
