@@ -3,7 +3,7 @@ import cv2 as cv
 import numpy as np
 import os
 from chess import Chess
-from utils import showImage,isBlankSquare,getBestScaleMatch,isPieceWhite
+from utils import showImage,isBlankSquare,isBlankSquare2,getBestScaleMatch,isPieceWhite
 from matplotlib import pyplot as plt
 import imutils
 
@@ -97,7 +97,8 @@ class ChessBoardAnalizer:
                                               y:y + square_size]
             #showImage("square" + str(x) + str(y), chess_square)
             #Filtramos primero si es un cuadrado sin nada
-            if isBlankSquare(chess_square):
+            #FIXME: cambiar metodo
+            if isBlankSquare2(chess_square):
                 #Si no tiene nada continuamos a la siguiente iteración 
                 continue
 

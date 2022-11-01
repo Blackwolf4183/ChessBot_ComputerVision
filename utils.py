@@ -148,7 +148,7 @@ def isBlankSquare2(image):
     flattened_img = np.float32(flattened_img)
 
     K = 3
-    it = 8
+    it = 30
 
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, it, 1.0)
     _,label,center=cv.kmeans(flattened_img,K,None,criteria,it,cv.KMEANS_RANDOM_CENTERS)

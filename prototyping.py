@@ -65,7 +65,7 @@ st = time.time()
 
 #isBlankSquare(chess_square)
 for i in range(64):
-    isBlankSquare(chess_square)
+    isBlankSquare2(chess_square)
 
 et = time.time()
 print("time: " ,et - st)
