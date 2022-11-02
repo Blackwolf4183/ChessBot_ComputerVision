@@ -136,7 +136,7 @@ def calculateAvgExecutionTime():
         f = os.path.join(directory, filename)
         # checking if it is a file
         if os.path.isfile(f):
-            iteration += 1
+            
             if(iteration > n_files): break
             st1 = time.time()
             tablero = cv.imread(f, cv.IMREAD_UNCHANGED)
@@ -144,6 +144,7 @@ def calculateAvgExecutionTime():
             chessBoardAnalizer.processBoard()
             et1 = time.time()
             total_time += et1-st1
+            iteration += 1
 
     print("\tAveragage execution time: ", total_time/4 , "seconds")
     

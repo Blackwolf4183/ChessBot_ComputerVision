@@ -23,9 +23,9 @@ warnings.filterwarnings("ignore")
 #INFO: https://github.com/jhlywa/chess.js LIBRERIA DE JS
 
 #INFO: variable para contar tiempo de inicio
-st = time.time()
 
 #Importamos imagen
+st = time.time()
 tablero = cv.imread('./test_images/test_board.png',cv.IMREAD_UNCHANGED)
 
 chessBoardAnalizer = ChessBoardAnalizer(tablero)
