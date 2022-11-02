@@ -138,6 +138,7 @@ def isBlankSquare2(image):
     flattened_img = np.float32(flattened_img)
 
     K = 3
+    #FIXME: 30 en pc grande - 35 en portatil para que funcione
     it = 30
 
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, it, 1.0)

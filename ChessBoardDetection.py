@@ -19,7 +19,14 @@ class ChessBoardAnalizer:
         "./template_images\\black_bishop.png": -3,
         "./template_images\\black_rook.png": -4,
         "./template_images\\black_queen.png": -5,
-        "./template_images\\black_king.png": -6
+        "./template_images\\black_king.png": -6,
+        #FOR LINUX
+        "./template_images/black_pawn.png": -1,
+        "./template_images/black_knight.png": -2,
+        "./template_images/black_bishop.png": -3,
+        "./template_images/black_rook.png": -4,
+        "./template_images/black_queen.png": -5,
+        "./template_images/black_king.png": -6
     }
 
     def __init__(self, image):
@@ -127,6 +134,7 @@ class ChessBoardAnalizer:
             x_piece = int(x / int(square_size))
             y_piece = int(y / int(square_size))
             
+
             piece_value = self.filename2piece[top_piece]
 
             #Evaluamos si la pieza es blanca para cambiarle el valor

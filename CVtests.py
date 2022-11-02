@@ -12,7 +12,9 @@ directory = './test_images'
 
 #test_image, laptop_board
 standard_list = [
-    "./test_images\\laptop_board.png", "./test_images\\test_image.png"
+    "./test_images\\laptop_board.png", "./test_images\\test_image.png",
+    #linux
+    "./test_images/laptop_board.png", "./test_images/test_image.png"
 ]
 standard_conf = [
     -4, -2, -3, -5, -6, -3, -2, -4, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0,
@@ -25,7 +27,12 @@ test_conf_1_list = [
     "./test_images\\test_board.png", "./test_images\\test_board_4.png",
     "./test_images\\test_board_5.png", "./test_images\\test_board_6.png",
     "./test_images\\test_board_7.png", "./test_images\\test_board_8.png",
-    "./test_images\\test_board_9.png"
+    "./test_images\\test_board_9.png",
+    #linux
+    "./test_images/test_board.png", "./test_images/test_board_4.png",
+    "./test_images/test_board_5.png", "./test_images/test_board_6.png",
+    "./test_images/test_board_7.png", "./test_images/test_board_8.png",
+    "./test_images/test_board_9.png"
 ]
 test_conf_1 = [
     -4, 0, 0, -6, 0, 0, 0, -4,
@@ -39,7 +46,7 @@ test_conf_1 = [
 ]
 
 #test_board_3
-test_conf_2_list = ["./test_images\\test_board_3.png"]
+test_conf_2_list = ["./test_images\\test_board_3.png","./test_images/test_board_3.png"]
 test_conf_2 = [
     -4, 0, 0, -6, 0, 0, 0, -4,
     -1, -1, -1, 0, 0, -1, -1, 0,
@@ -52,7 +59,9 @@ test_conf_2 = [
 ]
 
 #test_board_1, test_board_2
-test_conf_3_list = ["./test_images\\test_board_1.png","./test_images\\test_board_2.png"]
+test_conf_3_list = ["./test_images\\test_board_1.png","./test_images\\test_board_2.png",
+#linux
+"./test_images/test_board_1.png","./test_images/test_board_2.png"]
 test_conf_3 = [
     -4, 0, 0, 0, 0, 0, -4, 0,
     -1, 0, -6, 0, 0, -1, -1, 0,
@@ -64,7 +73,9 @@ test_conf_3 = [
     4, 0, 3, 0, 6, -3, 0, 0
 ]
 
-test_conf_4_list = ["./test_images\\test_board_1.png","./test_images\\test_board_10.png"]
+test_conf_4_list = ["./test_images\\test_board_1.png","./test_images\\test_board_10.png",
+#linux
+"./test_images/test_board_1.png","./test_images/test_board_10.png"]
 test_conf_4 = [
     0, -2, -3, 2, 0, 0, 0, -4,
     0, 0, -1, -1, -3, 0, 0, -1,
