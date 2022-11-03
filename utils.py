@@ -51,7 +51,6 @@ def isBlankSquare(image):
 
 def isPieceWhite(cropped_square):
     s_window = 5
-
     #Pasamos a gris
     cropped_square = cv.cvtColor(cropped_square,cv.COLOR_BGR2GRAY)
     
@@ -68,6 +67,7 @@ def isPieceWhite(cropped_square):
     whitePixels = 0
     flattened_img = np.array(cropped_square).flatten()
     for pixel in flattened_img:
+        #100 es el threshold de intensidad para considerar pixel blanco
         if pixel > 100: whitePixels = whitePixels +1
 
     #Si hay una proporcion grande de pixeles blancos (la ventana quizas se ha desplazado hacia un borde un poco)
@@ -86,7 +86,6 @@ def getBestScaleMatch(original,template):
         for scale in np.linspace(0.2, 1.6, 20)[::-1]:
             #reescalamos la imagen original
             resized = imutils.resize(original, width = int(original.shape[1] * scale))
-
             #cogemos el ratio
             r = original.shape[1] / float(resized.shape[1])
 
@@ -96,11 +95,8 @@ def getBestScaleMatch(original,template):
 
             #Aplicamos Canny a la imagen original
             original_edged = cv.Canny(resized,100,200)
-            #TODO:REMOVE
-            #showImage("Original_edged" + str(scale), original_edged)
-            result = cv.matchTemplate(original_edged, template, cv.TM_CCORR_NORMED)
-            #Calculamos la precisión del match
-            _, maxVal, _, maxLoc = cv.minMaxLoc(result)
+            result = cv.matchTemplate(original_edged, template, cv.TM_CCORR_NORMED) 
+            _, maxVal, _, maxLoc = cv.minMaxLoc(result) #Precision
 
             #print("maxVal is: " ,maxVal)
 
@@ -114,15 +110,13 @@ def getBestScaleMatch(original,template):
     
 
 
-
-
-#FIXME: intentos de mejora de kmeans
 def countPixels(clustered_image,center,img_size):
 
     ocurrences = {}
-
     counter = 0
+
     for color in center:
+        #Contamos cantidad de pixeles 
         amount = np.count_nonzero(np.all(np.array(clustered_image)==np.array(color),axis=2))
         ocurrences[counter] = round(amount/img_size,2)
         counter += 1
@@ -138,7 +132,7 @@ def isBlankSquare2(image):
     flattened_img = np.float32(flattened_img)
 
     K = 3
-    #FIXME: 30 en pc grande - 35 en portatil para que funcione
+    #REVIEW: 30 en pc grande - 35 en portatil para que funcione
     it = 30
 
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, it, 1.0)

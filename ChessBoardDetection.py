@@ -107,7 +107,8 @@ class ChessBoardAnalizer:
 
             #Filtramos primero si es un cuadrado sin nada
             if isBlankSquare2(chess_square): #REVIEW: probar si isBlankSquare2 es mejor que 1 
-                continue #Si no tiene nada continuamos a la siguiente iteración 
+                #Si no tiene nada continuamos a la siguiente iteración 
+                continue 
 
 
             #showImage("square" + str(x) + str(y), chess_square)
@@ -143,8 +144,6 @@ class ChessBoardAnalizer:
 
             chess.setPiece(x_piece, y_piece, piece_value)
 
-            #print("x: ", x_piece, " y: ", y_piece, " piece: " , filename2piece[top_piece])
-            #print("BEST MATCH: " , top_piece)
 
             #Vaciamos array
             precision_values.clear()
@@ -155,7 +154,6 @@ class ChessBoardAnalizer:
     def processBoard(self):
         contours = self.getContours()
         cropped_chessboard = self.findBoard(contours)
-        #showImage("cropped",cropped_chessboard)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
         updatedChess = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 

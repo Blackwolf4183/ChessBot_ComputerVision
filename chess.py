@@ -2,9 +2,11 @@ import numpy as np
 
 class Chess:
     
-    #12 x 12
+    #
 
     """
+        12 x 12 board
+
         PIECES:
         -PAWN:      1
         -KNIGHT:    2
@@ -51,7 +53,3 @@ class Chess:
         print("")
 
 
-""" chess = Chess()
-print(chess.tablero)
-chess.setPiece(7,7,6)
-chess.printChessBoard() """

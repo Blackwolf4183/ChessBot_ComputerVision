@@ -146,7 +146,7 @@ def calculateAvgExecutionTime():
             total_time += et1-st1
             iteration += 1
 
-    print("\tAveragage execution time: ", total_time/4 , "seconds")
+    print("\tAverage execution time: ", total_time/n_files , "seconds")
     
 
 print("Running tests...")
