@@ -156,3 +156,17 @@ def isBlankSquare2(image):
 
     return max_val >= blank_square_threshold
 
+def isBlankSquare3(image):
+
+    global blank_square_threshold
+
+    image = cv.cvtColor(image,cv.COLOR_BGR2RGB)
+    #print(image)
+
+    flattened_img = image.reshape((-1,3))
+    result = np.unique(flattened_img, axis=0, return_counts = True)
+    image_size = len(flattened_img)
+    ocurrences = result[1]
+    max_ocurrence = np.amax(ocurrences)
+
+    return max_ocurrence/image_size > blank_square_threshold
