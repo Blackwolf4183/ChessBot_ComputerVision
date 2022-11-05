@@ -3,12 +3,40 @@ from collections import Counter
 import numpy as np
 from sklearn.cluster import KMeans
 import imutils
+import win32gui, win32ui, win32con
 
 # Funcion para mostrar la imagen con tamaño variable
 def showImage(name, img, w=800, h=800):
     cv.namedWindow(name, cv.WINDOW_NORMAL) # Nombro la ventana
     cv.resizeWindow(name, w, h) # Reajustamos el tamaño de la ventana
     cv.imshow(name, img)
+
+# Lista los nombres de las ventanas abiertas
+def listWindowNames():
+        active_windows = []
+        def winEnumHandler(hwnd, ctx):
+            if win32gui.IsWindowVisible(hwnd):
+                active_windows.append(win32gui.GetWindowText(hwnd))
+        win32gui.EnumWindows(winEnumHandler, None)
+        
+        return active_windows
+
+# Busca los nombres de ventana que contengan Chess.com
+def findChessWindow():
+    chessWindows = []
+
+    for windowName in listWindowNames():
+        if "Chess.com" in windowName:
+            chessWindows.append(windowName)
+
+    arr_len = len(chessWindows)
+
+    if( arr_len == 1): 
+        return chessWindows[0]
+    elif(arr_len == 0):
+        raise Exception("No se ha registrado ninguna partida en Chess.com")
+    elif(arr_len > 1):
+        raise Exception("Hay mas de una partida jugandose a la vez")
 
 
 def palettePerc(k_cluster):
@@ -133,7 +161,7 @@ def isBlankSquare2(image):
 
     K = 3
     #REVIEW: 30 en pc grande - 35 en portatil para que funcione
-    it = 30
+    it = 35
 
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, it, 1.0)
     _,label,center=cv.kmeans(flattened_img,K,None,criteria,it,cv.KMEANS_RANDOM_CENTERS)
@@ -169,4 +197,6 @@ def isBlankSquare3(image):
     ocurrences = result[1]
     max_ocurrence = np.amax(ocurrences)
 
-    return max_ocurrence/image_size > blank_square_threshold
+    #FIXME: hay que cambiar el umbral, porque los cuadrados señalados con circulos en los movimientos
+    # de las piezas no los tiene en cuenta
+    return max_ocurrence/image_size > 0.8

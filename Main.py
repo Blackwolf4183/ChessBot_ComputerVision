@@ -2,6 +2,7 @@ import cv2 as cv
 import numpy as np
 from chess import Chess
 from ChessBoardDetection import ChessBoardAnalizer
+from screenCapturer import ScreenCapturer
 import time
 import warnings
 
@@ -13,6 +14,8 @@ warnings.filterwarnings("ignore")
 # ADD: tomar captura una vez se haya hecho un movimiento y luego esperar a que cambie el tablero para volver a mirar ()
 
 #INFO: screenCapturer.py
+#screenCapturer = ScreenCapturer
+
 
 #TODO: Actualizar si se está jugando una partida
 # ADD: Función que devuelva True/False isChessBoard()
