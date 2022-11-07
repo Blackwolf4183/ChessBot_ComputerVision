@@ -42,6 +42,17 @@ class Chess:
     def removePiece(self, x, y):
         self.setPiece(x, y, 0)
 
+    def board2Notation(self):
+
+        notationString = ""
+        spaces = 0
+
+        for f in range(8):
+            for c in range(8):
+                print("")
+
+        return notationString
+
     def printChessBoard(self):
         for f in range(8):
             print("")

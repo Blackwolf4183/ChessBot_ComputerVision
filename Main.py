@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np
 from chess import Chess
 from ChessBoardDetection import ChessBoardAnalizer
-from screenCapturer import ScreenCapturer
+from screenCapturer import ScreenCapture
 import time
 import warnings
 

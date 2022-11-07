@@ -16,7 +16,7 @@ try:
     pyautogui.getWindowsWithTitle(window_name)[0].maximize()
     screenCap = ScreenCapture(window_name)
     # Game Loop
-    print("Comienza la captura de image, no toques el teclado")
+    print("Comienza la captura de imagen, no toques el teclado")
     time.sleep(1)
 
 
