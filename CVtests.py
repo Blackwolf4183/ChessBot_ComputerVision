@@ -1,5 +1,5 @@
 import os
-from chess import Chess
+from chessboard import Chess
 import numpy as np
 import cv2 as cv
 from ChessBoardDetection import ChessBoardAnalizer

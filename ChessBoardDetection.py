@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
-from chess import Chess
+from chessboard import Chess
 from utils import showImage,isBlankSquare,isBlankSquare2,isBlankSquare3,getBestScaleMatch,isPieceWhite
 
 #Poner el path relativo
