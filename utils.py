@@ -3,7 +3,8 @@ from collections import Counter
 import numpy as np
 from sklearn.cluster import KMeans
 import imutils
-import win32gui, win32ui, win32con
+import win32gui
+import io
 
 # Funcion para mostrar la imagen con tamaño variable
 def showImage(name, img, w=800, h=800):
@@ -20,6 +21,52 @@ def listWindowNames():
         win32gui.EnumWindows(winEnumHandler, None)
         
         return active_windows
+
+def printArrayBoard(chess_array):
+    for f in range(8):
+        print("")
+        for c in range(8):
+            if(chess_array[f,c] < 0):
+                print(chess_array[f,c], "|",end = '')
+            else: 
+                print(chess_array[f,c], " |",end = '')
+    print("")
+
+#Para transformar los valores numericos del array en valores ASCII para FEN
+index2piece = {
+    1: "p",
+    2: "n",
+    3: "b",
+    4: "r",
+    5: "q",
+    6: "k",
+}
+
+def array2fen(chess_array):
+    # StringIO es mas eficiente para concatenar
+    with io.StringIO() as s:
+        for row in range(8):
+            empty = 0
+            for cell in range(8):
+                c = chess_array[row][cell]
+                if c != 0:
+                    if empty > 0:
+                        s.write(str(empty))
+                        empty = 0
+                    #escribir en notación FEN la pieza
+                    s.write(index2piece[abs(c)].upper(
+                    ) if c > 0 else index2piece[abs(c)].lower())
+                else:
+                    empty += 1
+            if empty > 0:
+                s.write(str(empty))
+            s.write('/')
+        # Move one position back to overwrite last '/'
+        s.seek(s.tell() - 1)
+        # If you do not have the additional information choose what to put
+        #FIXME: hay que cambiarlo para que siempre nos de la posición de nuestras piezas como turno que toca
+        s.write(' w KQkq - 0 1')
+        return s.getvalue()
 
 # Busca los nombres de ventana que contengan Chess.com
 def findChessWindow():

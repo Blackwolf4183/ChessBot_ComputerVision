@@ -1,8 +1,8 @@
 import cv2 as cv
 import numpy as np
 import os
-from chessboard import Chess
-from utils import showImage,isBlankSquare,isBlankSquare2,isBlankSquare3,getBestScaleMatch,isPieceWhite
+import math
+from utils import showImage,isBlankSquare3,getBestScaleMatch,isPieceWhite,array2fen
 
 #Poner el path relativo
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -17,13 +17,6 @@ class ChessBoardAnalizer:
         "./template_images\\black_rook.png": -4,
         "./template_images\\black_queen.png": -5,
         "./template_images\\black_king.png": -6,
-        #FOR LINUX
-        "./template_images/black_pawn.png": -1,
-        "./template_images/black_knight.png": -2,
-        "./template_images/black_bishop.png": -3,
-        "./template_images/black_rook.png": -4,
-        "./template_images/black_queen.png": -5,
-        "./template_images/black_king.png": -6
     }
 
     def __init__(self, image):
@@ -94,7 +87,7 @@ class ChessBoardAnalizer:
         #Iteramos por todos los cuadrados y vamos añadiendo piezas
         directory = './template_images'
         precision_values = []
-        chess = Chess()
+        board = np.zeros((8,8), dtype=np.int)
 
         for (x, y) in squares_array:
             #Cropeamos las imagenes
@@ -103,7 +96,7 @@ class ChessBoardAnalizer:
             #showImage("square" + str(x) + str(y), chess_square)
 
             #Filtramos primero si es un cuadrado sin nada
-            if isBlankSquare3(chess_square): #REVIEW: probar si isBlankSquare2 es mejor que 1 
+            if isBlankSquare3(chess_square):
                 #Si no tiene nada continuamos a la siguiente iteración 
                 continue 
 
@@ -121,7 +114,7 @@ class ChessBoardAnalizer:
             #print(precision_values)
 
             top_piece = "",
-            top_value = -100 #TODO: cambiar por -math.infinite
+            top_value = -math.inf
 
             for (name, precision) in precision_values:
                 if precision > top_value:
@@ -139,23 +132,28 @@ class ChessBoardAnalizer:
             if(isPieceWhite(chess_square)):
                 piece_value = -piece_value
 
-            chess.setPiece(x_piece, y_piece, piece_value)
-
+            #Metemos la pieza en la matriz
+            board[x_piece][y_piece] =  piece_value
 
             #Vaciamos array
             precision_values.clear()
 
-        return chess
+        #INFO: creación de string para notación FEN
+
+        fen = array2fen(board)
+
+
+        return board, fen
 
 
     def processBoard(self):
         contours = self.getContours()
         cropped_chessboard = self.findBoard(contours)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
-        updatedChess = self.classifyPieces(squares_array, square_size, cropped_chessboard)
+        updatedChess, fen = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 
         #Devolvemos el nuevo objeto Chess con las posiciones de las piezas actualizadas
-        return updatedChess
+        return updatedChess, fen
 
 
 

@@ -27,9 +27,10 @@ try:
         #cv.imshow('Computer Vision', screenshot)
 
         chessBoardAnalizer = ChessBoardAnalizer(screenshot)
-        resulting_board = chessBoardAnalizer.processBoard()
+        resulting_board,fen = chessBoardAnalizer.processBoard()
 
-        resulting_board.printChessBoard()
+        utils.printArrayBoard(resulting_board)
+        print("FEN: ",fen)
 
         if cv.waitKey(1) == ord('q'):
             cv.destroyAllWindows()
