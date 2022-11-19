@@ -1,6 +1,5 @@
 import cv2 as cv
 import numpy as np
-from chessboard import Chess
 from ChessBoardDetection import ChessBoardAnalizer
 from screenCapturer import ScreenCapture
 import time
