@@ -185,51 +185,6 @@ def getBestScaleMatch(original,template):
     
 
 
-def countPixels(clustered_image,center,img_size):
-
-    ocurrences = {}
-    counter = 0
-
-    for color in center:
-        #Contamos cantidad de pixeles 
-        amount = np.count_nonzero(np.all(np.array(clustered_image)==np.array(color),axis=2))
-        ocurrences[counter] = round(amount/img_size,2)
-        counter += 1
-        
-    return ocurrences
-
-
-def isBlankSquare2(image):
-    global blank_square_threshold
-
-    rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-    flattened_img = rgb_image.reshape((-1,3))
-    flattened_img = np.float32(flattened_img)
-
-    K = 3
-    #REVIEW: 30 en pc grande - 35 en portatil para que funcione
-    it = 35
-
-    criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, it, 1.0)
-    _,label,center=cv.kmeans(flattened_img,K,None,criteria,it,cv.KMEANS_RANDOM_CENTERS)
-    center = np.uint8(center)
-
-    res = center[label.flatten()]
-    res2 = res.reshape((rgb_image.shape))
-    #showImage("res",res2)
-
-    #Obtenemos el array con las apariciones de cada pixel
-    percentages = countPixels(res2,center,len(flattened_img))
-    #print(percentages)
-
-
-    max_val = 0
-    #Iteramos en un diccionario {0: 0.95, 1: 0.02, 2:0.05 ...}
-    for perc in percentages:
-        if percentages[perc] > max_val:
-            max_val = percentages[perc]
-
-    return max_val >= blank_square_threshold
 
 def isBlankSquare3(image):
 
