@@ -1,14 +1,17 @@
 import chess
 import chess.svg
+import chess.polyglot
+import time
 
 # Creado tablero para que no me grite la función
 board = chess.Board()
+#movehistory = []
 
 # Tablas usadas para la evaluación de posiciones
-#Si la casilla es positiva, la pieza intentara moverse a esa casilla
-#Si es negativa el motor tratara de evitar poner la pieza en esa casilla
+# Si la casilla es positiva, la pieza intentara moverse a esa casilla
+# Si es negativa el motor tratara de evitar poner la pieza en esa casilla
 
-pawntable = [ #La tabla esta hecha de tal manera que el motor se vea animado a avanzar los peones
+pawntable = [  # La tabla esta hecha de tal manera que el motor se vea animado a avanzar los peones
     0, 0, 0, 0, 0, 0, 0, 0,
     5, 10, 10, -20, -20, 10, 10, 5,
     5, -5, -10, 0, 0, -10, -5, 5,
@@ -18,7 +21,7 @@ pawntable = [ #La tabla esta hecha de tal manera que el motor se vea animado a a
     50, 50, 50, 50, 50, 50, 50, 50,
     0, 0, 0, 0, 0, 0, 0, 0]
 
-knightstable = [ # Los caballos se ven animados a ocupar el centro y evitar los bordes a toda costa
+knightstable = [  # Los caballos se ven animados a ocupar el centro y evitar los bordes a toda costa
     -50, -40, -30, -30, -30, -30, -40, -50,
     -40, -20, 0, 5, 5, 0, -20, -40,
     -30, 5, 10, 15, 15, 10, 5, -30,
@@ -28,7 +31,7 @@ knightstable = [ # Los caballos se ven animados a ocupar el centro y evitar los 
     -40, -20, 0, 0, 0, 0, -20, -40,
     -50, -40, -30, -30, -30, -30, -40, -50]
 
-bishopstable = [ # Los alfiles deben evitar las esquinas y los bordes del tablero
+bishopstable = [  # Los alfiles deben evitar las esquinas y los bordes del tablero
     -20, -10, -10, -10, -10, -10, -10, -20,
     -10, 5, 0, 0, 0, 0, 5, -10,
     -10, 10, 10, 10, 10, 10, 10, -10,
@@ -38,7 +41,7 @@ bishopstable = [ # Los alfiles deben evitar las esquinas y los bordes del tabler
     -10, 0, 0, 0, 0, 0, 0, -10,
     -20, -10, -10, -10, -10, -10, -10, -20]
 
-rookstable = [ # Las torres deben evitar las columnas a y h a la vez que ocupar la fila 7
+rookstable = [  # Las torres deben evitar las columnas a y h a la vez que ocupar la fila 7
     0, 0, 0, 5, 5, 0, 0, 0,
     -5, 0, 0, 0, 0, 0, 0, -5,
     -5, 0, 0, 0, 0, 0, 0, -5,
@@ -48,7 +51,7 @@ rookstable = [ # Las torres deben evitar las columnas a y h a la vez que ocupar 
     5, 10, 10, 10, 10, 10, 10, 5,
     0, 0, 0, 0, 0, 0, 0, 0]
 
-queenstable = [ # La dama debe evitar bordes y esquinas, y ocupar el centro
+queenstable = [  # La dama debe evitar bordes y esquinas, y ocupar el centro
     -20, -10, -10, -5, -5, -10, -10, -20,
     -10, 0, 0, 0, 0, 0, 0, -10,
     -10, 5, 5, 5, 5, 5, 0, -10,
@@ -58,7 +61,7 @@ queenstable = [ # La dama debe evitar bordes y esquinas, y ocupar el centro
     -10, 0, 0, 0, 0, 0, 0, -10,
     -20, -10, -10, -5, -5, -10, -10, -20]
 
-kingstable = [ # El rey debe mantenerse refugiado tras los peones
+kingstable = [  # El rey debe mantenerse refugiado tras los peones
     20, 30, 10, 0, 0, 10, 30, 20,
     20, 20, 0, 0, 0, 0, 20, 20,
     -10, -20, -20, -20, -20, -20, -20, -10,
@@ -70,14 +73,13 @@ kingstable = [ # El rey debe mantenerse refugiado tras los peones
 
 
 # Función que evaluará nuestro tablero
-# TODO: toquetear para que nos deje evaluar una posicion de una partida empezada sin su lista de movimientos
 def evaluate_board():
     if board.is_checkmate():
         if board.turn:
             return -9999
         else:
             return 9999
-    if board.is_stalemate() or board.is_insufficient_material(): #Rey ahogado o material insuficiente para dar mate resultan en tablas
+    if board.is_stalemate() or board.is_insufficient_material():  # Rey ahogado o material insuficiente para dar mate resultan en tablas
         return 0
 
     # Obtenemos el numero de piezas que tienen ambos jugadores
@@ -98,8 +100,8 @@ def evaluate_board():
                    + 500 * (white_rooks - black_rooks) + 900 * (white_queen - black_queen)
 
     # Calculamos la evaluacion segun las matrices definidas arriba
-    #La primera linea ira sumando las piezas que tenemos en el tablero segun el valor dado en la tabla
-    #La segunda linea flipea el tablero y evalua
+    # La primera linea ira sumando las piezas que tenemos en el tablero segun el valor dado en la tabla
+    # La segunda linea flipea el tablero y evalua
     eval_pawns = sum([pawntable[i] for i in board.pieces(chess.PAWN, chess.WHITE)])
     eval_pawns = eval_pawns + sum(
         [-pawntable[chess.square_mirror(i)] for i in board.pieces(chess.PAWN, chess.WHITE)])
@@ -126,7 +128,95 @@ def evaluate_board():
 
     evaluation = materialDiff + eval_pawns + eval_knights + eval_bishops + eval_rooks + eval_queen + eval_king
 
-    return evaluation #TODO: Cuando implemente la busqueda, diferenciar el signo de la evaluacion segun el turno
+    if board.turn:
+        return evaluation
+    else:
+        return -evaluation
 
 
+def alphabeta(alpha, beta, depth):
+    best_score = -9999
+    if depth == 0:
+        return quiesce(alpha, beta)
+
+    for move in board.legal_moves:
+        board.push(move)
+        score = -alphabeta(-beta, -alpha, depth - 1)
+        board.pop()
+
+        if score >= beta:
+            return score
+        if score > best_score:
+            score = best_score
+        if score > alpha:
+            alpha = score
+
+    return best_score
+
+
+def quiesce(alpha, beta):
+    stand_pat = evaluate_board()
+    if stand_pat >= beta:
+        return beta
+    if alpha < stand_pat:
+        alpha = stand_pat
+
+    for move in board.legal_moves:
+        if board.is_capture(move):
+            board.push(move)
+            score = -quiesce(-beta, -alpha)
+            board.pop()
+
+            if score >= beta:
+                return beta
+            if score > alpha:
+                alpha = score
+
+    return alpha
+
+
+def selectmove(depth):
+    try:
+        move = chess.polyglot.MemoryMappedReader("Perfect2017.bin").weighted_choice(board).move
+        #movehistory.append(move)
+        return move
+    except:
+        bestMove = chess.Move.null()
+        bestValue = -99999
+        alpha = -100000
+        beta = 100000
+        for move in board.legal_moves:
+            board.push(move)
+            boardValue = -alphabeta(-beta, -alpha, depth-1)
+            if boardValue > bestValue:
+                bestValue = boardValue
+                bestMove = move
+            if boardValue > alpha:
+                alpha = boardValue
+            board.pop()
+
+        #movehistory.append(bestMove)
+        return bestMove
+
+
+board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+
+print(board)
+print(board.is_valid())
+print(evaluate_board())
+
+print(selectmove(3))
+
+#board = chess.Board("r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 1")
+board = chess.Board("2q1r1rk/3bbnnp/p2p1pp1/2pPp3/PpP1P1P1/1P2BNNP/2BQ1PRK/7R w - - 0 1")
+print(board)
+print(board.is_valid())
+print(evaluate_board())
+start_time = time.time()
+print("Encontrando movimiento...")
+move_found = selectmove(3)
+
+print("Movimiento encontrado:")
+print(move_found)
+print("Ha tardado: " + time.time()-start_time + " segundos")
 
