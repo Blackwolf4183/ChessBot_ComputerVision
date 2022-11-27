@@ -27,7 +27,7 @@ try:
         #cv.imshow('Computer Vision', screenshot)
 
         chessBoardAnalizer = ChessBoardAnalizer(screenshot)
-        resulting_board,fen = chessBoardAnalizer.processBoard()
+        resulting_board,fen, x, y, square_size = chessBoardAnalizer.processBoard()
 
         utils.printArrayBoard(resulting_board)
         print("FEN: ",fen)

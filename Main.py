@@ -28,12 +28,12 @@ warnings.filterwarnings("ignore")
 
 #Importamos imagen
 st = time.time()
-tablero = cv.imread('./test_images/test_board.png',cv.IMREAD_UNCHANGED)
+tablero = cv.imread('./test_images/mover.png',cv.IMREAD_UNCHANGED)
 
 chessBoardAnalizer = ChessBoardAnalizer(tablero)
-resulting_board = chessBoardAnalizer.processBoard()
-
-resulting_board.printChessBoard()
+resulting_board,_ ,x,y,square_size = chessBoardAnalizer.processBoard()
+print("x,y: ", x, y)
+print("Square size: ", square_size)
 
 et = time.time()
 

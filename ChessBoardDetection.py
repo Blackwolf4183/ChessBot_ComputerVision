@@ -63,7 +63,8 @@ class ChessBoardAnalizer:
         #Dibujamos cuadrado para ver el tablero
         self.board = cv.drawContours(self.board, [contornoMax], -1, (0, 255, 0), 3)
         
-        return cropped_chessboard
+        #Devolvemos imagen recortada y posicion en la pantalla
+        return cropped_chessboard, xSquare, ySquare
 
     def divideSquares(self, cropped_board):
 
@@ -148,12 +149,12 @@ class ChessBoardAnalizer:
 
     def processBoard(self):
         contours = self.getContours()
-        cropped_chessboard = self.findBoard(contours)
+        cropped_chessboard, x, y = self.findBoard(contours)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
         updatedChess, fen = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 
         #Devolvemos el nuevo objeto Chess con las posiciones de las piezas actualizadas
-        return updatedChess, fen
+        return updatedChess, fen, x, y, square_size
 
 
 

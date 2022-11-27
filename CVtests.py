@@ -81,7 +81,7 @@ def testImageToChess(filename):
 
     tablero = cv.imread(filename, cv.IMREAD_UNCHANGED)
     chessBoardAnalizer = ChessBoardAnalizer(tablero)
-    resulting_board, _ = chessBoardAnalizer.processBoard()
+    resulting_board, _, _, _, _ = chessBoardAnalizer.processBoard()
 
     if filename in standard_list:
         if np.allclose(resulting_board,
