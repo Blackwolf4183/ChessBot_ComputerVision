@@ -1,22 +1,27 @@
 import cv2 as cv
-import numpy as np
 import os
 from ChessBoardDetection import ChessBoardAnalizer
 import utils
-from matplotlib import pyplot as plt
 import time
 from screenCapturer import ScreenCapture
 import pyautogui
+from ChessIncrementalEval import ChessEngine
+from autoMover import AutoMover
+import chess
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 try:
+    #Inicializacion de parametros
     window_name = utils.findChessWindow()
+    screenCap = ScreenCapture(window_name)
+
+    #Abrimos ventana
     pyautogui.getWindowsWithTitle(window_name)[0].minimize()
     pyautogui.getWindowsWithTitle(window_name)[0].maximize()
-    screenCap = ScreenCapture(window_name)
+
     # Game Loop
-    print("Comienza la captura de imagen, no toques el teclado")
+    print("Comienza la captura de imagen, no toque el teclado...")
     time.sleep(1)
 
 
@@ -24,7 +29,8 @@ try:
 
         # get an updated image of the game
         screenshot = screenCap.get_screenshot()
-        #cv.imshow('Computer Vision', screenshot)
+        cv.imshow('Computer Vision', screenshot)
+
 
         chessBoardAnalizer = ChessBoardAnalizer(screenshot)
         resulting_board,fen, x, y, square_size = chessBoardAnalizer.processBoard()
@@ -32,11 +38,16 @@ try:
         utils.printArrayBoard(resulting_board)
         print("FEN: ",fen)
 
+        board = chess.Board(fen)
+        engine = ChessEngine(board)
+        print("Best move: ",  engine.selectmove(4))
+
+
         if cv.waitKey(1) == ord('q'):
             cv.destroyAllWindows()
             break
 
-        #Tiempo de 1 segundo entre capturas
+            #Tiempo de 1 segundo entre capturas
       
 
 except Exception as e:
