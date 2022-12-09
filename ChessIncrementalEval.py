@@ -6,29 +6,21 @@ import time
 
 class ChessEngine: 
 
-    board_value = -9999  # Inicializar
-    board = chess.Board()
+    
     # movehistory = []
 
     # Tablas usadas para la evaluación de posiciones
     # Si la casilla es positiva, la pieza intentara moverse a esa casilla
     # Si es negativa el motor tratara de evitar poner la pieza en esa casilla
 
-    pawntable = []
-    knightstable = []
-    bishopstable = []
-    rookstable = []
-    queenstable = []
-    kingstable = []
-
-    pieces = []
-    tables = []
-    values = []
 
     def __init__(self,custom_board):
         global board_value
         global pawntable, knightstable, bishopstable, rookstable, queenstable, kingstable,tables,pieces,values
         global board
+
+        board_value = -9999  # Inicializar
+        board = chess.Board()
 
         pawntable = [  # La tabla esta hecha de tal manera que el motor se vea animado a avanzar los peones
             0, 0, 0, 0, 0, 0, 0, 0,
