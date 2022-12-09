@@ -3,21 +3,19 @@ import numpy as np
 from ChessBoardDetection import ChessBoardAnalizer
 import time
 import warnings
-from screenCapturer import ScreenCapture
 import utils
 import pyautogui
 import chess
 from ChessIncrementalEval import ChessEngine
 from autoMover import AutoMover
+import pieceprompt
 
 #para sklearn
 warnings.filterwarnings("ignore")
 
 
+#Prompt para preguntar color de piezas
 
-
-#Importamos imagen
-#tablero = cv.imread('./test_images/mover.png',cv.IMREAD_UNCHANGED)
 
 window_name = utils.findChessWindow()
 pyautogui.getWindowsWithTitle(window_name)[0].minimize()

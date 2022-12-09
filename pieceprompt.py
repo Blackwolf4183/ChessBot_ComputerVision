@@ -5,12 +5,9 @@ from PyQt5.QtGui import *
 import os
 
 
-def clicked():
-    print("clicked")
-    absolute_path = os.path.dirname(__file__)
-    relative_path = "fonts\\"
-    full_path = os.path.join(absolute_path, relative_path)
-    print(full_path)
+def clicked(color):
+    print("click")
+
 
 def window():
     app = QApplication([])
