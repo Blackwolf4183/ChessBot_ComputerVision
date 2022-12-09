@@ -65,7 +65,8 @@ def array2fen(chess_array):
         s.seek(s.tell() - 1)
         # If you do not have the additional information choose what to put
         #FIXME: hay que cambiarlo para que siempre nos de la posición de nuestras piezas como turno que toca
-        s.write(' w KQkq - 0 1')
+        #TODO: lo añadimos en el main para ponerle el color de piezas
+        #s.write(' w KQkq - 0 1')
         return s.getvalue()
 
 # Busca los nombres de ventana que contengan Chess.com

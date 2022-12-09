@@ -3,10 +3,14 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 import os
+import Main
 
 
-def clicked(color):
-    print("click")
+def clickedWhite():
+    Main.start("w")
+
+def clickedBlack():
+    Main.start("b")
 
 
 def window():
@@ -64,7 +68,7 @@ def window():
     """)
     negras.resize(200,40)
     negras.setFont(QFont("Karmatic Arcade",12))
-    negras.clicked.connect(clicked)
+    negras.clicked.connect(clickedBlack)
 
 
     blancas = QPushButton(win)
@@ -82,7 +86,7 @@ def window():
     """)
     blancas.move(150,250)
     blancas.resize(200,40)
-    blancas.clicked.connect(clicked)
+    blancas.clicked.connect(clickedWhite)
 
     #image
     label = QLabel(win)
