@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2aec8223-6e9b-4131-a5aa-226841c88e8a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ChessIncrementalEval.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ChessEvaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/ChessEvaluation.py" afterDir="false" />
     </list>
