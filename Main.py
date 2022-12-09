@@ -23,6 +23,8 @@ def start(color):
 
     time.sleep(1)
 
+
+    
     while True: 
         #INFO: variable para contar tiempo de inicio
         st = time.time()
