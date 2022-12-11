@@ -7,6 +7,7 @@ import pyautogui
 from ChessIncrementalEval import ChessEngine
 from autoMover import AutoMover
 import chess
+from stockfish import Stockfish
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -15,7 +16,7 @@ board = chess.Board("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
 engine = ChessEngine(board)
 
 print(engine.selectmove(4))
-
+""" 
 #chessbot
 #rnbqkbnr/pppp1ppp/4p3/8/3PP3/8/PPP2PPP/RNBQKBNR b KQkq d3 0 2
 
@@ -24,4 +25,11 @@ print(engine.selectmove(4))
 
 mover = AutoMover(586,167,99,'b')
 
-mover.movePiece("g8","f6")
+mover.movePiece("g8","f6") """
+
+stockfish = Stockfish(path="./stockfish/stockfish-windows-2022-x86-64-avx2")
+
+stockfish.set_fen_position("rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1")
+
+print("Stockfish best move: ", stockfish.get_best_move())
+

@@ -3,6 +3,10 @@ import chess.svg
 import chess.polyglot
 import time
 
+# Tablas usadas para la evaluación de posiciones
+# Si la casilla es positiva, la pieza intentara moverse a esa casilla
+# Si es negativa el motor tratara de evitar poner la pieza en esa casilla
+
 pawntable = [  # La tabla esta hecha de tal manera que el motor se vea animado a avanzar los peones
     0, 0, 0, 0, 0, 0, 0, 0, 5, 10, 10, -20, -20, 10, 10, 5, 5, -5, -10, 0, 0,
     -10, -5, 5, 0, 0, 0, 20, 20, 0, 0, 0, 5, 5, 10, 25, 25, 10, 5, 5, 10, 10,
@@ -56,11 +60,6 @@ values = [100, 320, 330, 500, 900]
 
 class ChessEngine:
 
-    # movehistory = []
-
-    # Tablas usadas para la evaluación de posiciones
-    # Si la casilla es positiva, la pieza intentara moverse a esa casilla
-    # Si es negativa el motor tratara de evitar poner la pieza en esa casilla
 
     def __init__(self, custom_board):
 
@@ -294,26 +293,3 @@ class ChessEngine:
             return bestMove
 
 
-########################################################################################################
-# ZONA DE PRUEBAS
-########################################################################################################
-""" board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
-engine = ChessEngine(board)
-
-
-print(board)
-print(board.is_valid())
-
-print(engine.selectmove(3))
-
-#board = chess.Board("r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 1")
-board = chess.Board("2q1r1rk/3bbnnp/p2p1pp1/2pPp3/PpP1P1P1/1P2BNNP/2BQ1PRK/7R w - - 0 1")
-print(board)
-print(board.is_valid())
-start_time = time.time()
-print("Encontrando movimiento...")
-move_found = engine.selectmove(4)
-
-print("Movimiento encontrado:")
-print(move_found)
-print("Ha tardado: " + str(time.time()-start_time) + " segundos") """

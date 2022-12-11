@@ -84,8 +84,6 @@ def completeFENString(fen,color):
 
     #FIXME: hay que ver como ponemos el final de la cadena para los openings
     fen = fen + " " + color + " KQkq - 0 1"
-
-    print("FEN: " , fen)
     return fen
 
 

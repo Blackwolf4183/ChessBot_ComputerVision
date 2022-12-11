@@ -8,15 +8,20 @@ import pyautogui
 import chess
 from ChessIncrementalEval import ChessEngine
 from autoMover import AutoMover
+from stockfish import Stockfish
 
 #para sklearn
 warnings.filterwarnings("ignore")
 
+#Para controlar que motor queremos usar
+#TODO: hay que cambiarlo
+useStockFish = True
 
 
 def start(color):
 
-    print("color is: " ,color)
+    print("Welcome con ChessBotCV")
+    print("Opening and maximizing window...")
 
     window_name = utils.findChessWindow()
     pyautogui.getWindowsWithTitle(window_name)[0].minimize()
@@ -42,25 +47,31 @@ def start(color):
         chessBoardAnalizer = ChessBoardAnalizer(tablero_opencv)
         resulting_board ,x ,y ,square_size = chessBoardAnalizer.processBoard()
 
-
         # Mostramos el tablero virtualizado por consola
         utils.printArrayBoard(resulting_board)
+
+        # Inicializamos AutoMover con los parámetros del tablero en la pantalla
+        autoMover = AutoMover(x,y,square_size,color)
         
+        # Nornalizamos cadena fen para usarla 
         fen = utils.array2fen(resulting_board,color)
         fen = utils.completeFENString(fen,color)
-
-        #TODO: hay que hacer sistema para que no mueva hasta que el oponente no hay movido
 
 
         # Creamos un tablero con la cadena FEN e inicializamos el motor
         board = chess.Board(fen)
-        engine = ChessEngine(board)
-        # Inicializamos AutoMover con los parámetros del tablero en la pantalla
-        autoMover = AutoMover(x,y,square_size,color)
+        print("BOARD FEN: ", board.fen())
 
-        # Encontramos el mejor movimiento con profundidad 4
-        #FIXME: hay bug en el que añade una q a un movimiento que no sea el inicial con las piezas negras
-        bestMove = engine.selectmove(4)
+        if not useStockFish: 
+            # Encontramos el mejor movimiento con profundidad 4
+            engine = ChessEngine(board)
+            bestMove = engine.selectmove(4)
+        else:
+            engine = Stockfish(path="./stockfish/stockfish-windows-2022-x86-64-avx2")
+            engine.set_fen_position(board.fen())
+            bestMove = engine.get_best_move()
+        
+
         print("Best move: ",  bestMove)
         
         # Movemos la pieza en la pantalla
@@ -75,6 +86,7 @@ def start(color):
             break
 
         time.sleep(2)
+        #TODO: hay que hacer sistema para que no mueva hasta que el oponente no hay movido
 
 
 
