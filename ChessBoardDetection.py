@@ -139,22 +139,18 @@ class ChessBoardAnalizer:
             #Vaciamos array
             precision_values.clear()
 
-        #INFO: creación de string para notación FEN
 
-        fen = array2fen(board)
-
-
-        return board, fen
+        return board
 
 
     def processBoard(self):
         contours = self.getContours()
         cropped_chessboard, x, y = self.findBoard(contours)
         squares_array, square_size = self.divideSquares(cropped_chessboard)
-        updatedChess, fen = self.classifyPieces(squares_array, square_size, cropped_chessboard)
+        updatedChess = self.classifyPieces(squares_array, square_size, cropped_chessboard)
 
         #Devolvemos el nuevo objeto Chess con las posiciones de las piezas actualizadas
-        return updatedChess, fen, x, y, square_size
+        return updatedChess, x, y, square_size
 
 
 

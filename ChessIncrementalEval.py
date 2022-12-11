@@ -52,8 +52,7 @@ tables = [
 ]
 values = [100, 320, 330, 500, 900]
 
-board_value = -9999
-board = chess.Board()
+
 
 class ChessEngine:
 
@@ -66,21 +65,21 @@ class ChessEngine:
     def __init__(self, custom_board):
 
         global pawntable, knightstable, bishopstable, rookstable, queenstable, kingstable, tables, pieces, values
-        global board,board_value
 
-        board = custom_board
+        self.board_value = -9999
+        self.board = custom_board
 
         # Obtenemos el numero de piezas que tienen ambos jugadores
-        white_pawns = len(board.pieces(chess.PAWN, chess.WHITE))
-        white_knights = len(board.pieces(chess.KNIGHT, chess.WHITE))
-        white_bishops = len(board.pieces(chess.BISHOP, chess.WHITE))
-        white_rooks = len(board.pieces(chess.ROOK, chess.WHITE))
-        white_queen = len(board.pieces(chess.QUEEN, chess.WHITE))
-        black_pawns = len(board.pieces(chess.PAWN, chess.BLACK))
-        black_knights = len(board.pieces(chess.KNIGHT, chess.BLACK))
-        black_bishops = len(board.pieces(chess.BISHOP, chess.BLACK))
-        black_rooks = len(board.pieces(chess.ROOK, chess.BLACK))
-        black_queen = len(board.pieces(chess.QUEEN, chess.BLACK))
+        white_pawns = len(self.board.pieces(chess.PAWN, chess.WHITE))
+        white_knights = len(self.board.pieces(chess.KNIGHT, chess.WHITE))
+        white_bishops = len(self.board.pieces(chess.BISHOP, chess.WHITE))
+        white_rooks = len(self.board.pieces(chess.ROOK, chess.WHITE))
+        white_queen = len(self.board.pieces(chess.QUEEN, chess.WHITE))
+        black_pawns = len(self.board.pieces(chess.PAWN, chess.BLACK))
+        black_knights = len(self.board.pieces(chess.KNIGHT, chess.BLACK))
+        black_bishops = len(self.board.pieces(chess.BISHOP, chess.BLACK))
+        black_rooks = len(self.board.pieces(chess.ROOK, chess.BLACK))
+        black_queen = len(self.board.pieces(chess.QUEEN, chess.BLACK))
 
         # Calculamos la diferencia de material
         materialDiff = 100 * (white_pawns - black_pawns) + 320 * (white_knights - black_knights) + 330 * (
@@ -91,155 +90,150 @@ class ChessEngine:
         # La primera linea ira sumando las piezas que tenemos en el tablero segun el valor dado en la tabla
         # La segunda linea flipea el tablero y evalua
         eval_pawns = sum(
-            [pawntable[i] for i in board.pieces(chess.PAWN, chess.WHITE)])
+            [pawntable[i] for i in self.board.pieces(chess.PAWN, chess.WHITE)])
         eval_pawns = eval_pawns + sum([
             -pawntable[chess.square_mirror(i)]
-            for i in board.pieces(chess.PAWN, chess.BLACK)
+            for i in self.board.pieces(chess.PAWN, chess.BLACK)
         ])
 
         eval_knights = sum([
             knightstable[i]
-            for i in board.pieces(chess.KNIGHT, chess.WHITE)
+            for i in self.board.pieces(chess.KNIGHT, chess.WHITE)
         ])
         eval_knights = eval_knights + sum([
             -knightstable[chess.square_mirror(i)]
-            for i in board.pieces(chess.KNIGHT, chess.BLACK)
+            for i in self.board.pieces(chess.KNIGHT, chess.BLACK)
         ])
 
         eval_bishops = sum([
             bishopstable[i]
-            for i in board.pieces(chess.BISHOP, chess.WHITE)
+            for i in self.board.pieces(chess.BISHOP, chess.WHITE)
         ])
         eval_bishops = eval_bishops + sum([
             -bishopstable[chess.square_mirror(i)]
-            for i in board.pieces(chess.BISHOP, chess.BLACK)
+            for i in self.board.pieces(chess.BISHOP, chess.BLACK)
         ])
 
         eval_rooks = sum([
-            rookstable[i] for i in board.pieces(chess.ROOK, chess.WHITE)
+            rookstable[i] for i in self.board.pieces(chess.ROOK, chess.WHITE)
         ])
         eval_rooks = eval_rooks + sum([
             -rookstable[chess.square_mirror(i)]
-            for i in board.pieces(chess.ROOK, chess.BLACK)
+            for i in self.board.pieces(chess.ROOK, chess.BLACK)
         ])
 
         eval_queen = sum([
-            queenstable[i] for i in board.pieces(chess.QUEEN, chess.WHITE)
+            queenstable[i] for i in self.board.pieces(chess.QUEEN, chess.WHITE)
         ])
         eval_queen = eval_queen + sum([
             -queenstable[chess.square_mirror(i)]
-            for i in board.pieces(chess.QUEEN, chess.BLACK)
+            for i in self.board.pieces(chess.QUEEN, chess.BLACK)
         ])
 
         eval_king = sum([
-            kingstable[i] for i in board.pieces(chess.KING, chess.WHITE)
+            kingstable[i] for i in self.board.pieces(chess.KING, chess.WHITE)
         ])
         eval_king = eval_king + sum([
             -kingstable[chess.square_mirror(i)]
-            for i in board.pieces(chess.KING, chess.BLACK)
+            for i in self.board.pieces(chess.KING, chess.BLACK)
         ])
 
-        board_value = materialDiff + eval_pawns + eval_knights + eval_bishops + eval_rooks + eval_queen + eval_king
+        self.board_value = materialDiff + eval_pawns + eval_knights + eval_bishops + eval_rooks + eval_queen + eval_king
 
-        print("Board value is: ", board_value)
+        print("Board value is: ", self.board_value)
         #return board_value
 
     def evaluate_board(self):
 
-        global board,board_value
 
-        if board.is_checkmate():
-            if board.turn:
+        if self.board.is_checkmate():
+            if self.board.turn:
                 return -9999
             else:
                 return 9999
-        if board.is_stalemate() or board.is_insufficient_material():
+        if self.board.is_stalemate() or self.board.is_insufficient_material():
             return 0
-        evaluation = board_value
-        if board.turn:
+        evaluation = self.board_value
+        if self.board.turn:
             return evaluation
         else:
             return -evaluation
 
     def update_evaluation(self, move, side):
         global tables, values
-        global board,board_value
 
-        moving_piece = board.piece_type_at(move.from_square)
+        moving_piece = self.board.piece_type_at(move.from_square)
 
         if side:  #blancas juegan
-            board_value = board_value - tables[moving_piece -
+            self.board_value = self.board_value - tables[moving_piece -
                                                          1][move.from_square]
             #Actualizamos el enroque
             if (move.from_square == chess.E1) and (move.to_square == chess.G1):
-                board_value = board_value - rookstable[chess.H1]
-                board_value = board_value + rookstable[chess.F1]
+                self.board_value = self.board_value - rookstable[chess.H1]
+                self.board_value = self.board_value + rookstable[chess.F1]
             elif (move.from_square == chess.E1) and (move.to_square
                                                      == chess.C1):
-                board_value = board_value - rookstable[chess.A1]
-                board_value = board_value + rookstable[chess.D1]
+                self.board_value = self.board_value - rookstable[chess.A1]
+                self.board_value = self.board_value + rookstable[chess.D1]
         else:
-            board_value = board_value + tables[moving_piece -
+            self.board_value = self.board_value + tables[moving_piece -
                                                          1][move.from_square]
             # Actualizamos el enroque
             if (move.from_square == chess.E8) and (move.to_square == chess.G8):
-                board_value = board_value - rookstable[chess.H8]
-                board_value = board_value + rookstable[chess.F8]
+                self.board_value = self.board_value - rookstable[chess.H8]
+                self.board_value = self.board_value + rookstable[chess.F8]
             elif (move.from_square == chess.E8) and (move.to_square
                                                      == chess.C8):
-                board_value = board_value - rookstable[chess.A8]
-                board_value = board_value + rookstable[chess.D8]
+                self.board_value = self.board_value - rookstable[chess.A8]
+                self.board_value = self.board_value + rookstable[chess.D8]
 
         if side:
-            board_value = board_value + tables[moving_piece -
+            self.board_value = self.board_value + tables[moving_piece -
                                                          1][move.to_square]
         else:
-            board_value = board_value - tables[moving_piece -
+            self.board_value = self.board_value - tables[moving_piece -
                                                          1][move.to_square]
 
         #Actualizamos diferencia de material
         if move.drop is not None:
             if side:
-                board_value = board_value + values[move.drop - 1]
+                self.board_value = self.board_value + values[move.drop - 1]
             else:
-                board_value = board_value - values[move.drop - 1]
+                self.board_value = self.board_value - values[move.drop - 1]
 
         #Actualizamos posibles promociones de piezas
         if move.promotion is not None:
             if side:
-                board_value = board_value + values[
+                self.board_value = self.board_value + values[
                     move.promotion - 1] - values[moving_piece - 1]
-                board_value = board_value - tables[moving_piece - 1][move.to_square] \
+                self.board_value = self.board_value - tables[moving_piece - 1][move.to_square] \
                             + tables[move.promotion-1][move.to_square]
             else:
-                board_value = board_value - values[
+                self.board_value = self.board_value - values[
                     move.promotion - 1] + values[moving_piece - 1]
-                board_value = board_value + tables[moving_piece - 1][move.to_square] \
+                self.board_value = self.board_value + tables[moving_piece - 1][move.to_square] \
                             - tables[move.promotion - 1][move.to_square]
             return move
 
     def make_move(self, move):
-        global board,board_value
 
-        self.update_evaluation(move, board.turn)
-        board.push(move)
+        self.update_evaluation(move, self.board.turn)
+        self.board.push(move)
         return move
 
     def unmake_move(self):  
-        global board,board_value
 
-        movement = board.pop()
-        self.update_evaluation(movement, not board.turn)
+        movement = self.board.pop()
+        self.update_evaluation(movement, not self.board.turn)
         return movement
 
     def alphabeta(self, alpha, beta, depth):
-        global board,board_value
 
         best_score = -9999
         if depth == 0:
             return self.quiesce(alpha, beta)
 
-        for move in board.legal_moves:
+        for move in self.board.legal_moves:
             self.make_move(move)
             score = -self.alphabeta(-beta, -alpha, depth - 1)
             self.unmake_move()
@@ -253,7 +247,6 @@ class ChessEngine:
         return best_score
 
     def quiesce(self, alpha, beta):
-        global board,board_value
 
         stand_pat = self.evaluate_board()
         if stand_pat >= beta:
@@ -261,8 +254,8 @@ class ChessEngine:
         if alpha < stand_pat:
             alpha = stand_pat
 
-        for move in board.legal_moves:
-            if board.is_capture(move):
+        for move in self.board.legal_moves:
+            if self.board.is_capture(move):
                 self.make_move(move)
                 score = -self.quiesce(-beta, -alpha)
                 self.unmake_move()
@@ -275,11 +268,11 @@ class ChessEngine:
         return alpha
 
     def selectmove(self, depth):
-        global board,board_value
 
         try:
             move = chess.polyglot.MemoryMappedReader(
-                "Perfect2017.bin").weighted_choice(board).move
+                "Perfect2017.bin").weighted_choice(self.board).move
+            print("OPENING ES: ", move)
             # movehistory.append(move)
             return move
         except:
@@ -287,14 +280,14 @@ class ChessEngine:
             bestValue = -99999
             alpha = -100000
             beta = 100000
-            for move in board.legal_moves:
+            for move in self.board.legal_moves:
                 self.make_move(move)
-                boardValue = -self.alphabeta(-beta, -alpha, depth - 1)
-                if boardValue > bestValue:
-                    bestValue = boardValue
+                self.boardValue = -self.alphabeta(-beta, -alpha, depth - 1)
+                if self.boardValue > bestValue:
+                    bestValue = self.boardValue
                     bestMove = move
-                if boardValue > alpha:
-                    alpha = boardValue
+                if self.boardValue > alpha:
+                    alpha = self.boardValue
                 self.unmake_move()
 
             # movehistory.append(bestMove)

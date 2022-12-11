@@ -13,6 +13,7 @@ from autoMover import AutoMover
 warnings.filterwarnings("ignore")
 
 
+
 def start(color):
 
     print("color is: " ,color)
@@ -24,12 +25,12 @@ def start(color):
     time.sleep(1)
 
     #Guardamos la ultima notacion fen del tablero 
-    current_board_fen = None
     
     while True: 
         # INFO: variable para contar tiempo de inicio
         st = time.time()
 
+        #TODO: extraer en funcione de utils todo esto
         # Tomamos captura y convertimos a formato opencv
         tablero = pyautogui.screenshot()
         tablero_opencv = np.array(tablero)  
@@ -39,33 +40,26 @@ def start(color):
 
         # Inicializamos analizador por vision por computador
         chessBoardAnalizer = ChessBoardAnalizer(tablero_opencv)
-        resulting_board ,fen ,x ,y ,square_size = chessBoardAnalizer.processBoard()
+        resulting_board ,x ,y ,square_size = chessBoardAnalizer.processBoard()
+
 
         # Mostramos el tablero virtualizado por consola
         utils.printArrayBoard(resulting_board)
-
-        # Normalizamos la string FEN y la printeamos
-        fen = fen[0:len(fen)-1] 
-        fen = fen + " " + color 
-        print("FEN: ",fen)
-
-        # INFO: para evitar calcular otra vez un movimiento si el tablero no ha cambiado
-        # REVIEW: hay que comprobar que no se rompe
-        if fen != None:
-            while current_board_fen == fen:
-                print("Esperando al siguiente movimiento...")
-                time.sleep(1)
-                resulting_board ,fen ,x ,y ,square_size = chessBoardAnalizer.processBoard()
         
-        current_board_fen = fen
+        fen = utils.array2fen(resulting_board,color)
+        fen = utils.completeFENString(fen,color)
+
+        #TODO: hay que hacer sistema para que no mueva hasta que el oponente no hay movido
+
 
         # Creamos un tablero con la cadena FEN e inicializamos el motor
         board = chess.Board(fen)
         engine = ChessEngine(board)
         # Inicializamos AutoMover con los parámetros del tablero en la pantalla
-        autoMover = AutoMover(x,y,square_size)
+        autoMover = AutoMover(x,y,square_size,color)
 
         # Encontramos el mejor movimiento con profundidad 4
+        #FIXME: hay bug en el que añade una q a un movimiento que no sea el inicial con las piezas negras
         bestMove = engine.selectmove(4)
         print("Best move: ",  bestMove)
         
@@ -79,6 +73,8 @@ def start(color):
         if cv.waitKey(1) == ord('q'):
             cv.destroyAllWindows()
             break
+
+        time.sleep(2)
 
 
 

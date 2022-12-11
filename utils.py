@@ -5,6 +5,7 @@ from sklearn.cluster import KMeans
 import imutils
 import win32gui
 import io
+import chess
 
 # Funcion para mostrar la imagen con tamaño variable
 def showImage(name, img, w=800, h=800):
@@ -42,7 +43,8 @@ index2piece = {
     6: "k",
 }
 
-def array2fen(chess_array):
+def array2fen(chess_array,color):
+    
     # StringIO es mas eficiente para concatenar
     with io.StringIO() as s:
         for row in range(8):
@@ -54,8 +56,7 @@ def array2fen(chess_array):
                         s.write(str(empty))
                         empty = 0
                     #escribir en notación FEN la pieza
-                    s.write(index2piece[abs(c)].upper(
-                    ) if c > 0 else index2piece[abs(c)].lower())
+                    s.write(index2piece[abs(c)].upper() if c > 0 else index2piece[abs(c)].lower())
                 else:
                     empty += 1
             if empty > 0:
@@ -63,11 +64,30 @@ def array2fen(chess_array):
             s.write('/')
         # Move one position back to overwrite last '/'
         s.seek(s.tell() - 1)
-        # If you do not have the additional information choose what to put
-        #FIXME: hay que cambiarlo para que siempre nos de la posición de nuestras piezas como turno que toca
-        #TODO: lo añadimos en el main para ponerle el color de piezas
-        #s.write(' w KQkq - 0 1')
-        return s.getvalue()
+        # Get the string from the StringIO object
+        fen = s.getvalue()        
+        # If the color parameter is "b", reverse the string
+        if color == 'b':
+            fen = fen[::-1]
+            fen = fen[1:]
+            fen += '/'
+        
+        return fen
+
+def change_case(s):
+    return "".join([c.lower() if c.isupper() else c.upper() for c in s])
+
+def completeFENString(fen,color):
+
+    # Normalizamos la string FEN y la printeamos
+    fen = fen[0:len(fen)-1] 
+
+    #FIXME: hay que ver como ponemos el final de la cadena para los openings
+    fen = fen + " " + color + " KQkq - 0 1"
+
+    print("FEN: " , fen)
+    return fen
+
 
 # Busca los nombres de ventana que contengan Chess.com
 def findChessWindow():
