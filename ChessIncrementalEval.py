@@ -246,7 +246,7 @@ class ChessEngine:
             if score >= beta:
                 return score
             if score > best_score:
-                score = best_score
+                best_score = score
             if score > alpha:
                 alpha = score
 
