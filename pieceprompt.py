@@ -1,16 +1,23 @@
 import sys
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,pyqtSlot
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+
 import os
 import Main
 
 
+useStockfish = False
+
+def changeUseStockFish(value):
+    global useStockfish
+    useStockfish = value == 2 
+
 def clickedWhite():
-    Main.start("w")
+    Main.start("w",useStockFish=useStockfish)
 
 def clickedBlack():
-    Main.start("b")
+    Main.start("b",useStockFish=useStockfish)
 
 
 def window():
@@ -87,6 +94,17 @@ def window():
     blancas.move(150,250)
     blancas.resize(200,40)
     blancas.clicked.connect(clickedWhite)
+
+    
+
+    checkbox = QCheckBox(win)
+    checkbox.setText("Use Stockfish")
+    checkbox.move(170,300)
+    checkbox.resize(200,40)
+    checkbox.setFont(QFont("Karmatic Arcade",10))
+    checkbox.stateChanged.connect(changeUseStockFish)
+
+   
 
     #image
     label = QLabel(win)

@@ -13,15 +13,13 @@ from stockfish import Stockfish
 #para sklearn
 warnings.filterwarnings("ignore")
 
-#Para controlar que motor queremos usar
-#TODO: hay que cambiarlo
-useStockFish = True
 
-
-def start(color):
+def start(color,useStockFish):
 
     print("Welcome con ChessBotCV")
     print("Opening and maximizing window...")
+    if useStockFish: print("You are using the Stockfish engine")
+    else: print("You are using our custom engine")
 
     window_name = utils.findChessWindow()
     pyautogui.getWindowsWithTitle(window_name)[0].minimize()
@@ -67,7 +65,7 @@ def start(color):
             engine = ChessEngine(board)
             bestMove = engine.selectmove(4)
         else:
-            engine = Stockfish(path="./stockfish/stockfish-windows-2022-x86-64-avx2")
+            engine = Stockfish(path="./stockfish/stockfish-windows-2022-x86-64-modern")
             engine.set_fen_position(board.fen())
             bestMove = engine.get_best_move()
         
