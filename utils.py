@@ -5,7 +5,6 @@ from sklearn.cluster import KMeans
 import imutils
 import win32gui
 import io
-import chess
 
 # Funcion para mostrar la imagen con tamaño variable
 def showImage(name, img, w=800, h=800):
@@ -66,7 +65,7 @@ def array2fen(chess_array,color):
         s.seek(s.tell() - 1)
         # Get the string from the StringIO object
         fen = s.getvalue()        
-        # If the color parameter is "b", reverse the string
+        # Si estamos jugando con piezas negras tenemos que revertir la String para que tenga sentido la orientación del tablero
         if color == 'b':
             fen = fen[::-1]
             fen = fen[1:]
@@ -79,10 +78,8 @@ def change_case(s):
 
 def completeFENString(fen,color):
 
-    # Normalizamos la string FEN y la printeamos
+    # Añadimos color según turno, normalizamos la string FEN y la printeamos
     fen = fen[0:len(fen)-1] 
-
-    #FIXME: hay que ver como ponemos el final de la cadena para los openings
     fen = fen + " " + color + " KQkq - 0 1"
     return fen
 
@@ -175,8 +172,8 @@ def getBestScaleMatch(original,template):
         found = None
         bestMatch = 0.0
 
-        #FIXME: los parametros de linspace se puede alterar para buscar cuales son los mejores
-        #FIXME: valores normales son 0.2,1 -- dependiendo de si nuestra imagen es más pequeña o más grande necesitaremos ajustar (quizas un script para sacar longitud de la captura y ver)
+        #INFO: los parametros de linspace se puede alterar para buscar cuales son los mejores
+        #INFO: valores normales son 0.2,1 -- dependiendo de si nuestra imagen es más pequeña o más grande necesitaremos ajustar (quizas un script para sacar longitud de la captura y ver)
         for scale in np.linspace(0.2, 1.6, 25)[::-1]:
             #reescalamos la imagen original
             resized = imutils.resize(original, width = int(original.shape[1] * scale))
@@ -210,7 +207,6 @@ def isBlankSquare3(image):
     global blank_square_threshold
 
     image = cv.cvtColor(image,cv.COLOR_BGR2RGB)
-    #print(image)
 
     flattened_img = image.reshape((-1,3))
     result = np.unique(flattened_img, axis=0, return_counts = True)
@@ -218,6 +214,4 @@ def isBlankSquare3(image):
     ocurrences = result[1]
     max_ocurrence = np.amax(ocurrences)
 
-    #FIXME: hay que cambiar el umbral, porque los cuadrados señalados con circulos en los movimientos
-    # de las piezas no los tiene en cuenta
     return max_ocurrence/image_size > 0.8

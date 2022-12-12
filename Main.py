@@ -27,19 +27,16 @@ def start(color,useStockFish):
 
     time.sleep(1)
 
-    #Guardamos la ultima notacion fen del tablero 
     
     while True: 
         # INFO: variable para contar tiempo de inicio
         st = time.time()
 
-        #TODO: extraer en funcione de utils todo esto
         # Tomamos captura y convertimos a formato opencv
         tablero = pyautogui.screenshot()
         tablero_opencv = np.array(tablero)  
         tablero_opencv = tablero_opencv[:, :, ::-1].copy()
 
-        #cv.imshow('Computer Vision', tablero_opencv)
 
         # Inicializamos analizador por vision por computador
         chessBoardAnalizer = ChessBoardAnalizer(tablero_opencv)
@@ -58,7 +55,7 @@ def start(color,useStockFish):
 
         # Creamos un tablero con la cadena FEN e inicializamos el motor
         board = chess.Board(fen)
-        print("BOARD FEN: ", board.fen())
+        print("Board FEN representation: ", board.fen())
 
         if not useStockFish: 
             # Encontramos el mejor movimiento con profundidad 4
@@ -73,7 +70,7 @@ def start(color,useStockFish):
         print("Best move: ",  bestMove)
         
         # Movemos la pieza en la pantalla
-        print("Moviendo pieza...")
+        print("Moving piece...")
         autoMover.movePiece(str(bestMove)[0:2],str(bestMove)[2:4])
 
         et = time.time()
