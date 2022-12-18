@@ -272,7 +272,6 @@ class ChessEngine:
             move = chess.polyglot.MemoryMappedReader(
                 "Perfect2017.bin").weighted_choice(self.board).move
             print("OPENING ES: ", move)
-            # movehistory.append(move)
             return move
         except:
             bestMove = chess.Move.null()
@@ -289,7 +288,6 @@ class ChessEngine:
                     alpha = self.boardValue
                 self.unmake_move()
 
-            # movehistory.append(bestMove)
             return bestMove
 
 
