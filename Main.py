@@ -63,6 +63,7 @@ def start(color,useStockFish):
             bestMove = engine.selectmove(4)
         else:
             engine = Stockfish(path="./stockfish/stockfish-windows-2022-x86-64-modern")
+            engine.set_depth(20)
             engine.set_fen_position(board.fen())
             bestMove = engine.get_best_move()
         
