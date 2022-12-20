@@ -63,7 +63,7 @@ def start(color,useStockFish):
             bestMove = engine.selectmove(4)
         else:
             engine = Stockfish(path="./stockfish/stockfish-windows-2022-x86-64-modern")
-            engine.set_depth(20)
+            engine.set_depth(12)
             engine.set_fen_position(board.fen())
             bestMove = engine.get_best_move()
         
@@ -81,7 +81,7 @@ def start(color,useStockFish):
             cv.destroyAllWindows()
             break
 
-        time.sleep(2)
+        time.sleep(3)
         #TODO: hay que hacer sistema para que no mueva hasta que el oponente no hay movido
 
 
